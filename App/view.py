@@ -33,11 +33,20 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
-
 def printMenu():
+    print("\n")
+    print("*******************************************")
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("1- Crear catalogo")
+    print("2- Cargar información en el catálogo")
+    print("3- Caracterizar las reproducciones")
+    print("4- Encontrar música para festejar")
+    print("5- Encontrar música para estudiar")
+    print("6- Estudiar los géneros musicales")
+    print("7- Indicar el género musical más escuchado en el tiempo")
+    print("8- Salir")
+    print("*******************************************")
+
 
 catalog = None
 
@@ -48,11 +57,25 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
+        print("\nInicializando....")
+        catalog = controller.init()
 
     elif int(inputs[0]) == 2:
+        print("Cargando información de los archivos ....")
+
+    elif int(inputs[0]) == 3:
         pass
 
+    elif int(inputs[0]) == 4:
+        pass
+
+    elif int(inputs[0]) == 5:
+        pass
+
+    elif int(inputs[0]) == 6:
+        pass
+    elif int(inputs[0]) == 7:
+        pass
     else:
         sys.exit(0)
 sys.exit(0)
