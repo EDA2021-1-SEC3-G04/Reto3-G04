@@ -37,6 +37,28 @@ def init():
 
 # Funciones para la carga de datos
 
+def loadData(catalog, contextcontentfile, sentimentvaluesfile, userhashtagsfile):
+    loadContext(catalog, contextcontentfile)
+    loadUserTrackHashtag(catalog, userhashtagsfile)
+    loadSentimentValues(catalog, sentimentvaluesfile)
+    return catalog
+
+
+def loadSentimentValues(catalog, sentimentvaluesfile):
+    sentimentvaluesfile = cf.data_dir + sentimentvaluesfile
+    input_file = csv.DictReader(open(sentimentvaluesfile, encoding="utf-8"),
+                                delimiter=",")
+    for hashtag in input_file:
+        model.addHashtag(catalog, hashtag)
+    return catalog
+
+
+def loadContext(catalog, contextcontefile): 
+    pass
+
+
+def loadUserTrackHashtag(catalog, userhashtagsfile): 
+    pass
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo

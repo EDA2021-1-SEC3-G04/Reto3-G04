@@ -50,6 +50,11 @@ def printMenu():
 
 catalog = None
 
+contextcontentfile =' /subsamples-small/context_content_features-small.csv'
+sentimentvaluesfile = '/subsamples-small/sentiment_values.csv'
+usertrackhashtagtimestampsfile = '/subsamples-small/user_track_hashtag_timestamps-small.csv'
+
+
 """
 Menu principal
 """
@@ -62,6 +67,7 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
+        controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
 
     elif int(inputs[0]) == 3:
         pass
