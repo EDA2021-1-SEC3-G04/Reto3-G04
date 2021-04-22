@@ -52,12 +52,11 @@ def newCatalog():
 
 
 # Funciones para agregar informacion al catalogo
-def addCategory(catalog, contextcontefile):
+def addEvent(catalog, event):
     """
     """
-    verify= lt.get ()
-        lt.addLast(catalog['category'], crime)
-        updateDateIndex(catalog['dateIndex'], crime)
+    lt.addLast(catalog['events'], event)
+    addCategory(catalog, event)
     return catalog
 # Funciones para creacion de datos
 
@@ -68,7 +67,7 @@ def addCategory(catalog, contextcontefile):
 # Funciones de ordenamiento
 
 
-def addEvent(catalog, event): 
+def addCategory(catalog, event): 
     # map = map by categoria de contenido
     # keySet()
     # if keySet is empty:  #primer dato
@@ -79,10 +78,13 @@ def addEvent(catalog, event):
     #       crearArbolNuevo()
     #   else:
     #       la_lista_del_arbol = getValue(.get(arbol, event[item])_
-    #       lt.addLast(la_lista_del_arbol, event)
-    # addEvent(listadetodoslosvenets)
+    #   lt.addLast(la_lista_del_arbol, event)
     pass
 
+def fillHashMap(map, evenet ):
+    mp.put(map. instrumenta;;l. None)
+
+    
 
 def addUserInfo(catalog, userInfo): 
     # map = map by tiempos (tabla hash normal)
@@ -94,3 +96,10 @@ def addUserInfo(catalog, userInfo):
     #     getValue(get....) - lista existente
     #addLasta(lista(exiztente o nueva), userInfo)
     pass
+
+def addHashtag(cataog, event): 
+    #  hastag = event['hashtag']
+    #  map = catalog[sentinmetn values]
+    #  
+    # mp.put(map. hasthag, event['vader_avg'])
+    # return catalog

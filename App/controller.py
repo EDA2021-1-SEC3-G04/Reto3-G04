@@ -52,17 +52,12 @@ def loadSentimentValues(catalog, sentimentvaluesfile):
         model.addHashtag(catalog, hashtag)
     return catalog
 
-
 def loadContext(catalog, contextcontefile): 
     contextcontentfile = cf.data_dir + contextcontentfile
     input_file = csv.DictReader(open(contextcontentfile, encoding="utf-8"),
                                 delimiter=",")
-    for category in input_file:
-        model.addCategory(catalog, category)
-    return catalog
-
     for event in input_file:
-        model.addEvent(catalog, event)
+        model.addCategory(catalog, event)
     return catalog
 
 def loadUserTrackHashtag(catalog, userhashtagsfile): 
