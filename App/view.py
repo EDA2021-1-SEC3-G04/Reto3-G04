@@ -67,22 +67,33 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
-        controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
+        answer = controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
         print("Total eventos de escucha:", lt.size(catalog['events']))
+        print("Total eventos de artistas unicos:", answer[1][0])
+        print("Total eventos de tracks unicos:", answer[1][1])
+        sub_list1 = lt.subList(catalog['events'], 1, 5)
+        sub_list1 = lt.subList(catalog['events'], lt.size(catalog['events']) - 5, 5)
+
+        for item in lt.iterator(sub_list1): 
+            print(item)
+        for item in lt.iterator(sub_list2): 
+            print(item)
+            
     elif int(inputs[0]) == 3:
-        categoria = input('Qué categoria de contenido desea consultar')
+        category = input('Qué categoria de contenido desea consultar: ')
         # verificar datos
-        min_range = float(input('Valor minimo de'), categoria)
-        max_range = float(input('Valor maximo de'), categoria)
+        min_range = float(input('Valor minimo: '))
+        max_range = float(input('Valor maximo: '))
         # verifcar datos
         statement1 = "{} is between {} {}"
         statement2 = "Total reproduction: {} Total unique artists {}"
 
-        answer = controller.categoryCaracterization(catalog, categoria, min_range, max_range)
-        
+        # answer = controller.categoryCaracterization(catalog, categoria, min_range, max_range)
+        tree = controller.getCateory(catalog, category)
         print('++++++ Req No. 1 results... ++++++')
-        print(statement1.format(categoria, min_range, max_range))
-        print(statement2.format(answer[0], answer[1]))
+        print("Para arbol de ", category, "\nElementos:", tree[0], "\nAltura:", tree[1])
+        # print(statement1.format(categoria, min_range, max_range))
+        # print(statement2.format(answer[0], answer[1]))
         
     elif int(inputs[0]) == 4:
         pass

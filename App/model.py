@@ -64,8 +64,9 @@ def addEvent(catalog, event):
 def categoryCaracterization(catalog, categoria, min_range, max_range): 
     category_info = mp.get(catalog['content_cateogries'], categoria)
 
-    category_tree = me.getKey(category_info)
+    category_tree = me.getValue(category_info)
 
+    category_tree['cmpfunction'] = cmpCategories
     list_of_lists = om.values(category_tree, min_range, max_range)
 
     total = 0
@@ -73,9 +74,9 @@ def categoryCaracterization(catalog, categoria, min_range, max_range):
     for sub_list in lt.iterator(list_of_lists): 
         total += lt.size(sub_list)
         for item in lt.iterator(sub_list):
-            item_present = lt.isPresent(artist_list, item)
+            item_present = lt.isPresent(artist_list, item['artist_id'])
             if item_present == 0:
-                lt.addLast(artist_list, item)
+                lt.addLast(artist_list, item['artist_id'])
     
     artist = lt.size(artist_list)
     return total, artist
@@ -201,3 +202,26 @@ def addHashtag(catalog, event):
     return catalog
 
  
+
+def countArtist(catalog):
+    artist_list = lt.newList()
+    track_list = lt.newList()
+
+    for event in lt.iterator(catalog['events']):
+        artist_present = lt.isPresent(artist_list, event['artist_id'])
+        track_present = lt.isPresent(artist_list, event['track_id'])
+
+        if artist_present == 0: 
+            lt.addLast(artist_list, event['artist_id'])
+        if track_present == 0:
+            lt.addLast(track_list, event['track_id'])
+    artists_size = lt.size(artist_list)
+    tracks_size = lt.size(track_list)
+    return artists_size, tracks_size
+
+
+def getCateory(catalog, category): 
+    category_info = mp.get(catalog['content_cateogries'], category)
+    category_tree = me.getValue(category_info)
+
+    return om.size(category_tree), om.height(category_tree)

@@ -41,7 +41,9 @@ def loadData(catalog, contextcontentfile, sentimentvaluesfile, userhashtagsfile)
     loadContext(catalog, contextcontentfile)
     loadUserTrackHashtag(catalog, userhashtagsfile)
     loadSentimentValues(catalog, sentimentvaluesfile)
-    return catalog
+    info = model.countArtist(catalog)
+    
+    return catalog, info
 
 
 def loadSentimentValues(catalog, sentimentvaluesfile):
@@ -57,7 +59,7 @@ def loadContext(catalog, contextcontefile):
     input_file = csv.DictReader(open(contextcontentfile, encoding="utf-8"),
                                 delimiter=",")
     for event in input_file:
-        model.addCategory(catalog, event)
+        model.addEvent(catalog, event)
     return catalog
 
 def loadUserTrackHashtag(catalog, userhashtagsfile): 
@@ -74,3 +76,6 @@ def loadUserTrackHashtag(catalog, userhashtagsfile):
 
 def categoryCaracterization(catalog, categoria, min_range, max_range):
     return model.categoryCaracterization(catalog, categoria, min_range, max_range)
+
+def getCateory(catalog, category): 
+    return model.getCateory(catalog, category)
