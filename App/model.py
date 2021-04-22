@@ -43,9 +43,9 @@ def newCatalog():
     catalog = {'sentimentvalues': None, 'events': None, 'content_cateogires':None, 'user_created_at': None}
     catalog['events'] = lt.newList('SINGLE_LINKED', cmpEvents)
     catalog['sentimentalvalues'] = om.newMap(omaptype='BST',
-                                      comparefunction=comparesentimentalvalues)
+                                      comparefunction=cmpHashtags)
     catalog['content_cateogries'] = mp.newMap(omaptype='BST',
-                                      comparefunction=cmpCateogries)
+                                      comparefunction=cmpCategories)
     catalog['user_created_at'] = om.newMap(omaptype='RBT',
                                       comparefunction=cmpDates)
     return catalog
@@ -64,10 +64,60 @@ def addEvent(catalog, event):
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
+def cmpHashtags(hashtag1, hashtag2):
+    if hashtag1 > hashtag2: 
+        return 1
+    if hashtag1 < hashtag2: 
+        return -1
+    else:
+        return 0
+
+def cmpEvents(event1, event2):
+    if event1 > event2: 
+        return 1
+    if event1 < event2: 
+        return -1
+    else:
+        return 0
+
+def cmpCategories(cat1, cat2):
+    if cat1 > cat2: 
+        return 1
+    if cat1 < cat2: 
+        return -1
+    else:
+        return 0    
+
+def cmpDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1   
 # Funciones de ordenamiento
 
 
 def addCategory(catalog, event): 
+    category_map = catalog['content_cateogries']
+    keys = mp.keySet(cateogry_map)
+    if lt.size(keys) <= 0: 
+        keys = fillHashMap(cateogry_map)
+    for item in keys: 
+        cate_tree = mp.get(category_map, item)
+        if cate_tree is None: 
+            cate_tree = createCategTree()
+        mp.put(category_map, item, cate_tree)
+        tree_list = om.get(cate_tree, event[item])
+        if tree_list is None: 
+            tree_list = lt.newList()
+        else: 
+            tree_list = me.getValue(tree_list)
+        lt.addLast(tree_list, event)
+    
     # map = map by categoria de contenido
     # keySet()
     # if keySet is empty:  #primer dato
@@ -81,10 +131,26 @@ def addCategory(catalog, event):
     #   lt.addLast(la_lista_del_arbol, event)
     pass
 
-def fillHashMap(map, evenet ):
-    mp.put(map. instrumenta;;l. None)
+def fillHashMap(map, event):
+    event_cols = lt.newList()
 
-    
+    lt.addLast("instrumentalness")
+    lt.addLast("liveness")
+    lt.addLast("speechiness")
+    lt.addLast("danceability")
+    lt.addLast("valence")
+    lt.addLast("tempo")
+    lt.addLast("acousticness")
+
+    # "instrumentalness","liveness","speechiness","danceability","valence","loudness","tempo","acousticness","energy"
+    for event in lt.iterator(event_cols): 
+        mp.put(map, event,  None)
+
+    return map
+
+def createCategTree(): 
+    tree = om.newMap(omaptype='RBT', comparefunction=cmpCategValues)
+    return tree
 
 def addUserInfo(catalog, userInfo): 
     # map = map by tiempos (tabla hash normal)
