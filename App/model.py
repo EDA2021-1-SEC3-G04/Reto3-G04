@@ -28,6 +28,7 @@
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
@@ -39,11 +40,14 @@ los mismos.
 
 #Construcción de modelos
 def newCatalog():
-    catalog = {'sentimentalvalues': None,
-                }
-    catalog['sentimentalvalues'] = lt.newList('SINGLE_LINKED', comparesentimentalvalues)
+    catalog = {'sentimentvalues': None, 'events': None, 'content_cateogires':None, 'user_created_at': None}
+    catalog['events'] = lt.newList('SINGLE_LINKED', cmpEvents)
     catalog['sentimentalvalues'] = om.newMap(omaptype='BST',
                                       comparefunction=comparesentimentalvalues)
+    catalog['content_cateogries'] = mp.newMap(omaptype='BST',
+                                      comparefunction=cmpCateogries)
+    catalog['user_created_at'] = om.newMap(omaptype='RBT',
+                                      comparefunction=cmpDates)
     return catalog
 
 
