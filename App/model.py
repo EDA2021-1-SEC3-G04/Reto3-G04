@@ -39,6 +39,7 @@ los mismos.
 
 # Construccion de modelos
 
+
 # Funciones para agregar informacion al catalogo
 
 # Funciones para creacion de datos
@@ -48,3 +49,31 @@ los mismos.
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 # Funciones de ordenamiento
+
+
+def addEvent(catalog, event): 
+    # map = map by categoria de contenido
+    # keySet()
+    # if keySet is empty:  #primer dato
+    #   fillHashMap()
+    # for item in keySet():
+    #   el_arbol = get(map, item)
+    #   if el arbol no existe:
+    #       crearArbolNuevo()
+    #   else:
+    #       la_lista_del_arbol = getValue(.get(arbol, event[item])_
+    #       lt.addLast(la_lista_del_arbol, event)
+    # addEvent(listadetodoslosvenets)
+    pass
+
+
+def addUserInfo(catalog, userInfo): 
+    # map = map by tiempos (tabla hash normal)
+    # get(map, userInfo[creatednat])
+    # no existe:
+    #   crearLista-Value
+    #   put.listavalue en el mapa
+    # existe
+    #     getValue(get....) - lista existente
+    #addLasta(lista(exiztente o nueva), userInfo)
+    pass
