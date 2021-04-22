@@ -67,7 +67,8 @@ def loadUserTrackHashtag(catalog, userhashtagsfile):
     for date in input_file:
         model.addDate(catalog, date)
     return catalog
-    
+
+def eventDate.date()
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo"""

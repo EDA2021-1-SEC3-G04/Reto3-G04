@@ -133,7 +133,6 @@ def addCategory(catalog, event):
 
 def fillHashMap(map, event):
     event_cols = lt.newList()
-
     lt.addLast("instrumentalness")
     lt.addLast("liveness")
     lt.addLast("speechiness")
@@ -153,19 +152,23 @@ def createCategTree():
     return tree
 
 def addUserInfo(catalog, userInfo): 
-    # map = map by tiempos (tabla hash normal)
-    # get(map, userInfo[creatednat])
-    # no existe:
-    #   crearLista-Value
-    #   put.listavalue en el mapa
-    # existe
-    #     getValue(get....) - lista existente
-    #addLasta(lista(exiztente o nueva), userInfo)
-    pass
+    mapDates=catalog["user_created_at"] 
+    eventDate = userInfo["created_at"]
+    eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(mapDates,eventDate.date())
+    if entry is None: 
+        datentry = lt.newList()
+        om.put(mapDates, mapDates.date(), datentry) 
+    else:
+        datentry = me.getValue(entry)
+    
+    lt.addLast(datentry, userInfo)
+    return catalog
 
 def addHashtag(cataog, event): 
-    #  hastag = event['hashtag']
-    #  map = catalog[sentinmetn values]
-    #  
-    # mp.put(map. hasthag, event['vader_avg'])
-    # return catalog
+    hashtag["content_cateogries"] = event["content_cateogries"]
+    catalog["content_cateogries"] = catalog["sentimentalvalues"]
+    mp.put(catalog["content_cateogries"], event['vader_avg'])
+    return catalog
+
+ 
