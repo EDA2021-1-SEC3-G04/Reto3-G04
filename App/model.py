@@ -37,10 +37,23 @@ Se define la estructura de un catálogo de videos. El catálogo tendrá dos list
 los mismos.
 """
 
-# Construccion de modelos
+#Construcción de modelos
+def newCatalog():
+    catalog = {'sentimentalvalues': None,
+                }
+    catalog['sentimentalvalues'] = lt.newList('SINGLE_LINKED', comparesentimentalvalues)
+    catalog['sentimentalvalues'] = om.newMap(omaptype='BST',
+                                      comparefunction=comparesentimentalvalues)
+    return catalog
 
 # Funciones para agregar informacion al catalogo
-
+def addCategory(catalog, contextcontefile):
+    """
+    """
+    verify= lt.get ()
+        lt.addLast(catalog['category'], crime)
+        updateDateIndex(catalog['dateIndex'], crime)
+    return catalog
 # Funciones para creacion de datos
 
 # Funciones de consulta
