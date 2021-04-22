@@ -53,7 +53,7 @@ def loadSentimentValues(catalog, sentimentvaluesfile):
     return catalog
 
 def loadContext(catalog, contextcontefile): 
-    contextcontentfile = cf.data_dir + contextcontentfile
+    contextcontentfile = cf.data_dir + contextcontefile
     input_file = csv.DictReader(open(contextcontentfile, encoding="utf-8"),
                                 delimiter=",")
     for event in input_file:
@@ -65,10 +65,12 @@ def loadUserTrackHashtag(catalog, userhashtagsfile):
     input_file = csv.DictReader(open(userhashtagsfile, encoding="utf-8"),
                                 delimiter=",")
     for date in input_file:
-        model.addDate(catalog, date)
+        model.addUserInfo(catalog, date)
     return catalog
 
-def eventDate.date()
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo"""
+
+def categoryCaracterization(catalog, categoria, min_range, max_range):
+    return model.categoryCaracterization(catalog, categoria, min_range, max_range)

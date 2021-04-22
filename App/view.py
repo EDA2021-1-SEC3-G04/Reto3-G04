@@ -50,9 +50,9 @@ def printMenu():
 
 catalog = None
 
-contextcontentfile =' /subsamples-small/context_content_features-small.csv'
+contextcontentfile ='/subsamples-small/context_content_features-small.csv'
 sentimentvaluesfile = '/subsamples-small/sentiment_values.csv'
-usertrackhashtagtimestampsfile = '/subsamples-small/user_track_hashtag_timestamps-small.csv'
+usertrackhashtagtimestampsfile = '/subsamples-small/user_track_hashtag_timestamp-small.csv'
 
 
 """
@@ -68,10 +68,22 @@ while True:
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
         controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
-
+        print("Total eventos de escucha:", lt.size(catalog['events']))
     elif int(inputs[0]) == 3:
-        pass
+        categoria = input('Qué categoria de contenido desea consultar')
+        # verificar datos
+        min_range = float(input('Valor minimo de'), categoria)
+        max_range = float(input('Valor maximo de'), categoria)
+        # verifcar datos
+        statement1 = "{} is between {} {}"
+        statement2 = "Total reproduction: {} Total unique artists {}"
 
+        answer = controller.categoryCaracterization(catalog, categoria, min_range, max_range)
+        
+        print('++++++ Req No. 1 results... ++++++')
+        print(statement1.format(categoria, min_range, max_range))
+        print(statement2.format(answer[0], answer[1]))
+        
     elif int(inputs[0]) == 4:
         pass
 
