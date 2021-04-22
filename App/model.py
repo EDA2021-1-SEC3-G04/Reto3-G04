@@ -42,7 +42,7 @@ los mismos.
 def newCatalog():
     catalog = {'sentimentvalues': None, 'events': None, 'content_cateogires':None, 'user_created_at': None}
     catalog['events'] = lt.newList('SINGLE_LINKED', cmpEvents)
-    catalog['sentimentalvalues'] = om.newMap(omaptype='BST',
+    catalog['sentimentvalues'] = om.newMap(omaptype='BST',
                                       comparefunction=cmpHashtags)
     catalog['content_cateogries'] = mp.newMap(omaptype='BST',
                                       comparefunction=cmpCategories)
@@ -166,9 +166,8 @@ def addUserInfo(catalog, userInfo):
     return catalog
 
 def addHashtag(cataog, event): 
-    hashtag["content_cateogries"] = event["content_cateogries"]
-    catalog["content_cateogries"] = catalog["sentimentalvalues"]
-    mp.put(catalog["content_cateogries"], event['vader_avg'])
+    hashtag = event["hashtag"]
+    mp.put(catalog["sentimentvalues"], hashtag,  event['vader_avg'])
     return catalog
 
  
