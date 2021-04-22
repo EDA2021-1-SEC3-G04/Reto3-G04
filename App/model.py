@@ -204,6 +204,7 @@ def addHashtag(catalog, event):
  
 
 def countArtist(catalog):
+    # TODO: cargar como hashmap y sacar el size
     artist_list = lt.newList()
     track_list = lt.newList()
 

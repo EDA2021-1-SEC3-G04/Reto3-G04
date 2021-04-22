@@ -72,13 +72,13 @@ while True:
         print("Total eventos de artistas unicos:", answer[1][0])
         print("Total eventos de tracks unicos:", answer[1][1])
         sub_list1 = lt.subList(catalog['events'], 1, 5)
-        sub_list1 = lt.subList(catalog['events'], lt.size(catalog['events']) - 5, 5)
+        sub_list2 = lt.subList(catalog['events'], lt.size(catalog['events']) - 5, 5)
 
         for item in lt.iterator(sub_list1): 
             print(item)
         for item in lt.iterator(sub_list2): 
             print(item)
-            
+
     elif int(inputs[0]) == 3:
         category = input('Qué categoria de contenido desea consultar: ')
         # verificar datos
