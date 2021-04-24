@@ -102,13 +102,14 @@ def addCategory(catalog, event):
 
 def fillHashMap(map_cate):
     event_cols = lt.newList(datastructure='ARRAY_LIST')
-    lt.addLast(event_cols,"instrumentalness")
-    lt.addLast(event_cols,"liveness")
-    lt.addLast(event_cols,"speechiness")
-    lt.addLast(event_cols,"danceability")
-    lt.addLast(event_cols,"valence")
-    lt.addLast(event_cols,"tempo")
-    lt.addLast(event_cols,"acousticness")
+    lt.addLast(event_cols, "instrumentalness")
+    lt.addLast(event_cols, "liveness")
+    lt.addLast(event_cols, "speechiness")
+    lt.addLast(event_cols, "danceability")
+    lt.addLast(event_cols, "valence")
+    lt.addLast(event_cols, "tempo")
+    lt.addLast(event_cols, "acousticness")
+    lt.addLast(event_cols, "energy")
 
     # "instrumentalness","liveness","speechiness","danceability","valence","loudness","tempo","acousticness","energy"
 
@@ -152,6 +153,7 @@ def addHashtag(catalog, event):
 # ==============================
 
 
+"""Requerimeinto 1"""
 def categoryCaracterization(catalog, categoria, min_range, max_range): 
     category_info = mp.get(catalog['content_cateogries'], categoria)
     category_tree = me.getValue(category_info)
@@ -169,6 +171,29 @@ def categoryCaracterization(catalog, categoria, min_range, max_range):
 
     artist = mp.size(unique_artists)
     return total, artist
+
+"""Requerimeinto 2"""
+
+
+def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity): 
+    energy_tree = me.getValue(mp.get(catalog['content_cateogries'], 'energy'))
+
+    energy_values = om.values(energy_tree, min_energy, max_energy)
+
+    unique_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
+    final_items = lt.newList(datastructure='ARRAY_LIST')
+    for sublist in lt.iterator(energy_values):
+        for event in lt.iterator(sublist): 
+            if checkWithUser(catalog, event):
+                if min_danceability <= float(event['danceability']) <= max_danceablity: 
+                    lt.addLast(final_items, event)
+                    mp.put(unique_tracks, event['track_id'], event)
+
+    tracks = mp.size(unique_tracks)
+    
+    return final_items, tracks
+                
+
 
 
 def checkWithUser(catalog, event):

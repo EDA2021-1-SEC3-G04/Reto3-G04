@@ -78,5 +78,8 @@ def loadUserTrackHashtag(catalog, userhashtagsfile):
 def categoryCaracterization(catalog, categoria, min_range, max_range):
     return model.categoryCaracterization(catalog, categoria, min_range, max_range)
 
+def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity):
+    return model.partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity)
+
 def getCateory(catalog, category): 
     return model.getCateory(catalog, category)

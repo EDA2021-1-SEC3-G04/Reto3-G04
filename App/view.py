@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+import random
 assert cf
 
 
@@ -66,6 +67,15 @@ def printLoadInfo(answer):
         n += 1
 
 
+def printTracks(list_of_tracks): 
+    print('\n--- Unique track_id ---')
+    statement = 'Track {}: {} with energy of {} and danceability of {}'
+    for n in range(0, 5): 
+        random_pos = random.randint(1, lt.size(list_of_tracks))
+        rand_item = lt.getElement(list_of_tracks, random_pos)
+
+        print(statement.format(n, rand_item['track_id'], rand_item['energy'], rand_item['danceability']))
+
 catalog = None
 
 # File names
@@ -104,22 +114,29 @@ while True:
 
                 print('++++++ Req No. 1 results... ++++++')
                 statement1 = "{} is between {} and {}"
-                statement2 = "Total reproduction: {} \t Total unique artists {}"
+                statement2 = "Total of reproduction: {} \t Total unique artists {}"
                 # print("Para arbol de ", category, "\nElementos:", tree[0], "\nAltura:", tree[1])
                 print(statement1.format(category, min_range, max_range))
                 print(statement2.format(answer[0], answer[1]))
         else: 
             print('Categoría de contenido no válida')
     elif int(inputs[0]) == 4:
-        min_energy = input('Valor mínimo para Energy (debe ser entre 0.0 y 1.0): ')
-        max_energy = input('Valor máximo para Energy (debe ser entre 0.0 y 1.0): ')
-        min_danceablity = input('Valor mínimo para Danceability (debe ser entre 0.0 y 1.0): ')
-        max_danceablity = input('Valor mínimo para Danceability (debe ser entre 0.0 y 1.0): ')
+        min_energy = float(input('Valor mínimo para Energy (debe ser entre 0.0 y 1.0): '))
+        max_energy = float(input('Valor máximo para Energy (debe ser entre 0.0 y 1.0): '))
+        min_danceability = float(input('Valor mínimo para Danceability (debe ser entre 0.0 y 1.0): '))
+        max_danceability = float(input('Valor mínimo para Danceability (debe ser entre 0.0 y 1.0): '))
 
-        if (min_energy - max_energy > 0.0) or min_energy < 0.0 or max_energy > 1.0 or (min_danceablity - max_danceablity < 0.0) or min_danceablity < 0.0 or max_danceablity> 1:
+        if (min_energy - max_energy > 0.0) or min_energy < 0.0 or max_energy > 1.0 or (min_danceability - max_danceability > 0.0) or min_danceability < 0.0 or max_danceability > 1:
             print('Rangos inválidos, inténtelo de nuevo')
         else:
-            pass
+            answer = controller.partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceability)
+
+            print('\n \n++++++ Req No. 2 results... ++++++')
+            print('Energy is between', min_energy, 'and', max_energy)
+            print('Danceability is between', min_danceability, 'and', max_danceability)
+            print('Total of unique tracks in events:', answer[1])
+            printTracks(answer[0])
+
     elif int(inputs[0]) == 5:
         pass
 
