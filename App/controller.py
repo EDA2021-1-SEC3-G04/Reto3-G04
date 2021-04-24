@@ -41,9 +41,10 @@ def loadData(catalog, contextcontentfile, sentimentvaluesfile, userhashtagsfile)
     loadContext(catalog, contextcontentfile)
     loadUserTrackHashtag(catalog, userhashtagsfile)
     loadSentimentValues(catalog, sentimentvaluesfile)
-    info = model.countArtist(catalog)
+    artists = model.countArtist(catalog)
+    tracks = model.countTracks(catalog)
     
-    return catalog, info
+    return catalog, artists, tracks
 
 
 def loadSentimentValues(catalog, sentimentvaluesfile):

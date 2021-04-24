@@ -47,6 +47,23 @@ def printMenu():
     print("8- Salir")
     print("*******************************************")
 
+def printLoadInfo(answer):
+    catalog = answer[0
+    ]
+    print("Total eventos de escucha:", lt.size(catalog['events']))
+    print("Total eventos de artistas unicos:", answer[1])
+    print("Total eventos de tracks unicos:", answer[2])
+
+    sub_list1 = lt.subList(catalog['events'], 1, 5)
+    sub_list2 = lt.subList(catalog['events'], lt.size(catalog['events']) - 6, 5)
+
+    n = 1
+    for item in lt.iterator(sub_list1): 
+        print('Video', n, ':', item, '\n')
+        n += 1
+    for item in lt.iterator(sub_list2): 
+        print('Video', n, ':', item, '\n')
+        n += 1
 
 catalog = None
 
@@ -68,16 +85,8 @@ while True:
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
         answer = controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
-        print("Total eventos de escucha:", lt.size(catalog['events']))
-        print("Total eventos de artistas unicos:", answer[1][0])
-        print("Total eventos de tracks unicos:", answer[1][1])
-        sub_list1 = lt.subList(catalog['events'], 1, 5)
-        sub_list2 = lt.subList(catalog['events'], lt.size(catalog['events']) - 5, 5)
-
-        for item in lt.iterator(sub_list1): 
-            print(item)
-        for item in lt.iterator(sub_list2): 
-            print(item)
+        printLoadInfo(answer)
+        
 
     elif int(inputs[0]) == 3:
         category = input('Qué categoria de contenido desea consultar: ')

@@ -47,6 +47,8 @@ def newCatalog():
     catalog['content_cateogries'] = mp.newMap(numelements=17, maptype='PROBING', loadfactor=0.5, comparefunction=cmpCategories)
     catalog['user_created_at'] = om.newMap(omaptype='RBT',
                                       comparefunction=cmpDates)
+    catalog['unique_artists'] = mp.newMap(numelements=50000, maptype='CHAINING', comparefunction = cmpCategories)
+    catalog['unique_tracks'] = mp.newMap(numelements=50000, maptype='CHAINING', comparefunction = cmpCategories)
     return catalog
 
 
@@ -55,6 +57,8 @@ def addEvent(catalog, event):
     """
     """
     lt.addLast(catalog['events'], event)
+    mp.put(catalog['unique_artists'], event['artist_id'], event)
+    mp.put(catalog['unique_tracks'], event['track_id'], event)
     addCategory(catalog, event)
     return catalog
 # Funciones para creacion de datos
@@ -126,7 +130,15 @@ def cmpDates(date1, date2):
     elif (date1 > date2):
         return 1
     else:
-        return -1   
+        return -1  
+
+def cmpUnique(artist1, artist2): 
+    if artist1 < artist2: 
+        return -1
+    elif artist1 > artist2: 
+        return 1
+    else: 
+        return 0
 # Funciones de ordenamiento
 
 
@@ -205,21 +217,11 @@ def addHashtag(catalog, event):
 
 def countArtist(catalog):
     # TODO: cargar como hashmap y sacar el size
-    artist_list = lt.newList()
-    track_list = lt.newList()
+    return mp.size(catalog['unique_artists'])
 
-    for event in lt.iterator(catalog['events']):
-        artist_present = lt.isPresent(artist_list, event['artist_id'])
-        track_present = lt.isPresent(artist_list, event['track_id'])
-
-        if artist_present == 0: 
-            lt.addLast(artist_list, event['artist_id'])
-        if track_present == 0:
-            lt.addLast(track_list, event['track_id'])
-    artists_size = lt.size(artist_list)
-    tracks_size = lt.size(track_list)
-    return artists_size, tracks_size
-
+def countTracks(catalog):
+    # TODO: cargar como hashmap y sacar el size
+    return mp.size(catalog['unique_tracks'])
 
 def getCateory(catalog, category): 
     category_info = mp.get(catalog['content_cateogries'], category)
