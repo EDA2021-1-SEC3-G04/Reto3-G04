@@ -48,11 +48,10 @@ def printMenu():
     print("*******************************************")
 
 def printLoadInfo(answer):
-    catalog = answer[0
-    ]
+    catalog = answer[0]
     print("Total eventos de escucha:", lt.size(catalog['events']))
     print("Total eventos de artistas unicos:", answer[1])
-    print("Total eventos de tracks unicos:", answer[2])
+    print("Total eventos de tracks unicos:", answer[2], '\n')
 
     sub_list1 = lt.subList(catalog['events'], 1, 5)
     sub_list2 = lt.subList(catalog['events'], lt.size(catalog['events']) - 6, 5)
