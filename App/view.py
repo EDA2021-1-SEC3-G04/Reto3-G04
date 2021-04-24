@@ -97,7 +97,7 @@ while True:
             min_range = float(input('Valor minimo (debe ser entre 0.0 y 1.0): '))
             max_range = float(input('Valor maximo (debe ser entre 0.0 y 1.0): '))
             
-            if min_range < 0.0 or min_range > 1.0 or max_range < 0.0 or max_range > 1.0: 
+            if (min_range - max_range > 0.0) or min_range < 0.0 or max_range > 1.0: 
                 print('Rangos inválidos, inténtelo de nuevo')
             else: 
                 answer = controller.categoryCaracterization(catalog, category, min_range, max_range)
@@ -111,8 +111,15 @@ while True:
         else: 
             print('Categoría de contenido no válida')
     elif int(inputs[0]) == 4:
-        pass
+        min_energy = input('Valor mínimo para Energy (debe ser entre 0.0 y 1.0): ')
+        max_energy = input('Valor máximo para Energy (debe ser entre 0.0 y 1.0): ')
+        min_danceablity = input('Valor mínimo para Danceability (debe ser entre 0.0 y 1.0): ')
+        max_danceablity = input('Valor mínimo para Danceability (debe ser entre 0.0 y 1.0): ')
 
+        if (min_energy - max_energy > 0.0) or min_energy < 0.0 or max_energy > 1.0 or (min_danceablity - max_danceablity < 0.0) or min_danceablity < 0.0 or max_danceablity> 1:
+            print('Rangos inválidos, inténtelo de nuevo')
+        else:
+            pass
     elif int(inputs[0]) == 5:
         pass
 

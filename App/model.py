@@ -50,8 +50,9 @@ def newCatalog():
     catalog['content_cateogries'] = mp.newMap(numelements=17, maptype='PROBING', loadfactor=0.5, comparefunction=cmpCategories)
     catalog['user_created_at'] = om.newMap(omaptype='RBT',
                                       comparefunction=cmpDates)
-    catalog['unique_artists'] = mp.newMap(numelements=50000, maptype='CHAINING', comparefunction = cmpCategories)
-    catalog['unique_tracks'] = mp.newMap(numelements=50000, maptype='CHAINING', comparefunction = cmpCategories)
+    catalog['unique_artists'] = mp.newMap(numelements=50000, maptype='CHAINING', loadfactor=0.5,  comparefunction = cmpCategories)
+    catalog['unique_tracks'] = mp.newMap(numelements=50000, maptype='CHAINING', loadfactor=0.5, comparefunction = cmpCategories)
+    catalog['genre_dictionary'] = mp.newMap(numelements=100, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
     return catalog
 
 
@@ -138,7 +139,7 @@ def addUserInfo(catalog, userInfo):
 
 
 def addHashtag(catalog, event): 
-    hashtag = event['hashtag']
+    hashtag = event['hashtag'].lower()
     mp.put(catalog["sentimentvalues"], hashtag,  event['vader_avg'])
     return catalog
 
@@ -161,12 +162,25 @@ def categoryCaracterization(catalog, categoria, min_range, max_range):
     unique_artists = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
     
     for sub_list in lt.iterator(list_of_lists): 
-        total += lt.size(sub_list)
         for item in lt.iterator(sub_list):
-            mp.put(unique_artists, item['artist_id'], item)
+            if checkWithUser(catalog, item): 
+                total += 1
+                mp.put(unique_artists, item['artist_id'], item)
 
     artist = mp.size(unique_artists)
     return total, artist
+
+
+def checkWithUser(catalog, event):
+    event_date = event['created_at']
+    event_date = datetime.datetime.strptime(event_date, '%Y-%m-%d %H:%M:%S')
+    user_events_on_date = om.get(catalog['user_created_at'], event_date.date())
+
+    for user_event in lt.iterator(me.getValue(user_events_on_date)):
+        if (user_event['user_id'] == event['user_id']) and (user_event['track_id'] == event['track_id']):
+            return True
+    
+    return False
 
 
 # ==============================
