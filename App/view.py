@@ -44,8 +44,9 @@ def printMenu():
     print("5- Encontrar música para estudiar")
     print("6- Estudiar los géneros musicales")
     print("7- Indicar el género musical más escuchado en el tiempo")
-    print("8- Salir")
+    print("0- Salir")
     print("*******************************************")
+
 
 def printLoadInfo(answer):
     catalog = answer[0]
@@ -64,8 +65,10 @@ def printLoadInfo(answer):
         print('Video', n, ':', item, '\n')
         n += 1
 
+
 catalog = None
 
+# File names
 contextcontentfile ='/subsamples-small/context_content_features-small.csv'
 sentimentvaluesfile = '/subsamples-small/sentiment_values.csv'
 usertrackhashtagtimestampsfile = '/subsamples-small/user_track_hashtag_timestamp-small.csv'
@@ -84,25 +87,29 @@ while True:
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
         answer = controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
-        printLoadInfo(answer)
-        
+        printLoadInfo(answer)       
 
     elif int(inputs[0]) == 3:
         category = input('Qué categoria de contenido desea consultar: ')
-        # verificar datos
-        min_range = float(input('Valor minimo: '))
-        max_range = float(input('Valor maximo: '))
-        # verifcar datos
-        statement1 = "{} is between {} {}"
-        statement2 = "Total reproduction: {} Total unique artists {}"
+        category_tree = controller.getCateory(catalog, category)
 
-        # answer = controller.categoryCaracterization(catalog, categoria, min_range, max_range)
-        tree = controller.getCateory(catalog, category)
-        print('++++++ Req No. 1 results... ++++++')
-        print("Para arbol de ", category, "\nElementos:", tree[0], "\nAltura:", tree[1])
-        # print(statement1.format(categoria, min_range, max_range))
-        # print(statement2.format(answer[0], answer[1]))
-        
+        if category_tree is not None:
+            min_range = float(input('Valor minimo (debe ser entre 0.0 y 1.0): '))
+            max_range = float(input('Valor maximo (debe ser entre 0.0 y 1.0): '))
+            
+            if min_range < 0.0 or min_range > 1.0 or max_range < 0.0 or max_range > 1.0: 
+                print('Rangos inválidos, inténtelo de nuevo')
+            else: 
+                answer = controller.categoryCaracterization(catalog, category, min_range, max_range)
+
+                print('++++++ Req No. 1 results... ++++++')
+                statement1 = "{} is between {} and {}"
+                statement2 = "Total reproduction: {} \t Total unique artists {}"
+                # print("Para arbol de ", category, "\nElementos:", tree[0], "\nAltura:", tree[1])
+                print(statement1.format(category, min_range, max_range))
+                print(statement2.format(answer[0], answer[1]))
+        else: 
+            print('Categoría de contenido no válida')
     elif int(inputs[0]) == 4:
         pass
 
