@@ -83,3 +83,6 @@ def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablit
 
 def getCateory(catalog, category): 
     return model.getCateory(catalog, category)
+
+def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
+    return model.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)

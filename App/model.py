@@ -193,8 +193,23 @@ def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablit
     
     return final_items, tracks
                 
+"""Requerimeinto 3"""
+def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
+    instrumentalness_tree = me.getValue(mp.get(catalog['content_cateogries'], 'instrumentalness'))
+    instrumentalness_values = om.values(instrumentalness_tree, min_instrumentalness, max_instrumentalness)
 
+    unique_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
+    final_items = lt.newList(datastructure='ARRAY_LIST')
+    for sublist in lt.iterator(instrumentalness_values):
+        for event in lt.iterator(sublist): 
+            if checkWithUser(catalog, event):
+                if min_tempo <= float(event['tempo']) <= max_tempo: 
+                    lt.addLast(final_items, event)
+                    mp.put(unique_tracks, event['track_id'], event)
 
+    tracks = mp.size(unique_tracks)
+    
+    return final_items, tracks
 
 def checkWithUser(catalog, event):
     event_date = event['created_at']

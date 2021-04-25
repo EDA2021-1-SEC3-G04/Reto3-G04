@@ -74,9 +74,19 @@ def printTracks(list_of_tracks):
         random_pos = random.randint(1, lt.size(list_of_tracks))
         rand_item = lt.getElement(list_of_tracks, random_pos)
 
-        print(statement.format(n, rand_item['track_id'], rand_item['energy'], rand_item['danceability']))
+        print(statement.format(n+1, rand_item['track_id'], rand_item['energy'], rand_item['danceability']))
 
 catalog = None
+
+
+def printTracks2(list_of_tracks): 
+    print('\n--- Unique track_id ---')
+    statement = 'Track {}: {} with instrumentalness of {} and tempo of {}'
+    for n in range(0, 5): 
+        random_pos = random.randint(1, lt.size(list_of_tracks))
+        rand_item = lt.getElement(list_of_tracks, random_pos)
+
+        print(statement.format(n+1, rand_item['track_id'], rand_item['instrumentalness'], rand_item['tempo']))
 
 # File names
 contextcontentfile ='/subsamples-small/context_content_features-small.csv'
@@ -138,7 +148,22 @@ while True:
             printTracks(answer[0])
 
     elif int(inputs[0]) == 5:
-        pass
+        min_instrumentalness = float(input('Valor mínimo para Instrumentalness (debe ser entre 0.0 y 1.0): '))
+        max_instrumentalness = float(input('Valor máximo para Instrumentalness (debe ser entre 0.0 y 1.0): '))
+        min_tempo = float(input('Valor mínimo para  Tempo: '))
+        max_tempo = float(input('Valor mínimo para  Tempo: '))
+
+        if (min_instrumentalness - max_instrumentalness > 0.0) or min_instrumentalness < 0.0 or max_instrumentalness > 1.0 or (min_tempo - max_tempo > 0.0) or min_tempo < 0.0:
+            print('Rangos inválidos, inténtelo de nuevo')
+        else:
+            answer = controller.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
+
+            print('\n \n++++++ Req No. 3 results... ++++++')
+            print('Tempo is between', min_tempo, 'and', max_tempo)
+            print('Instrumentalness is between', min_instrumentalness, 'and', max_instrumentalness)
+            print('Total of unique tracks in events:', answer[1])
+            printTracks2(answer[0])
+        
 
     elif int(inputs[0]) == 6:
         pass
