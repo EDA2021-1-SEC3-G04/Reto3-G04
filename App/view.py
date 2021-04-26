@@ -124,7 +124,7 @@ while True:
             else: 
                 answer = controller.categoryCaracterization(catalog, category, min_range, max_range)
 
-                print('++++++ Req No. 1 results... ++++++')
+                print('\n\n++++++ Req No. 1 results... ++++++')
                 statement1 = "{} is between {} and {}"
                 statement2 = "Total of reproduction: {} \t Total unique artists {}"
                 # print("Para arbol de ", category, "\nElementos:", tree[0], "\nAltura:", tree[1])
@@ -169,24 +169,24 @@ while True:
     elif int(inputs[0]) == 6:
         genres = input("Genero(s) a buscar (separelos con un espacio): ").split()
 
-
+        all_valid = True
         for genre in genres: 
             verf_genre = controller.getGenre(catalog, genre)
-            all_valid = True
+            
             if verf_genre is None:
-                new_genre = input('Desea crear un nuevo género? \n 1 - Si \n 2 - No \n>')
+                new_genre = int(input('Desea crear un nuevo género para ' + genre + '?\n 1 - Si \n 2 - No \n>'))
                 if new_genre == 1:
-                    min_tempo = input('Tempo minimo del género: ')
-                    max_tempo = input('Tempo máximo del género: ')
+                    min_tempo = float(input('Tempo minimo del género: '))
+                    max_tempo = float(input('Tempo máximo del género: '))
                     controller.newGenre(catalog, genre, min_tempo, max_tempo)
                 else:
-                    print('El género ingresado no es válido, intentelo de nuevo.')
+                    print('El género', genre, 'no es válido, intentelo de nuevo.')
                     all_valid = False
 
         if all_valid:
             answer = controller.genreStudy(catalog, genres)
 
-            print('++++++ Req No. 4 results... ++++++')
+            print('\n \n++++++ Req No. 4 results... ++++++')
             totalReps = controller.getReps(answer)
             print('Total of reproductions: ', totalReps)
 
@@ -196,8 +196,8 @@ while True:
             statememnt4 = "----- Some artists for {} -----"
             statememnt5 = "Artist {}: {}"
 
-            for genre in lt.iterator(mp.keySet(answer)):
-                print(statement1.format(genre))
+            for genre in genres:
+                print('\n', statement1.format(genre))
                 ranges = me.getValue(mp.get(catalog['genre_dictionary'], genre))
                 print(statement2.format(genre, ranges['min'], ranges['max']))
                 reps_tot = controller.listSize(me.getValue(mp.get(answer, genre))['list'])

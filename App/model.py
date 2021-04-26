@@ -156,7 +156,7 @@ def genreDictionary(catalog):
     mp.put(g_dict, 'Pop', {'min': 100.0, 'max': 130.0})
     mp.put(g_dict, 'R&B', {'min': 60.0, 'max': 80.0})
     mp.put(g_dict, 'Rock', {'min': 110.0, 'max': 140.0})
-    mp.put(g_dict, 'Metal', {'min': 100.0, 'max': 160.0))
+    mp.put(g_dict, 'Metal', {'min': 100.0, 'max': 160.0})
     return catalog
 
 
