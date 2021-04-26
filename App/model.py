@@ -148,15 +148,15 @@ def addHashtag(catalog, event):
 
 def genreDictionary(catalog):
     g_dict = catalog['genre_dictionary']
-    mp.put(g_dict, 'Reggae', {'min': 60, 'max': 90})
-    mp.put(g_dict, 'Down-tempo', {'min': 70, 'max': 100})
-    mp.put(g_dict, 'Chill-out', {'min': 90, 'max': 120})
-    mp.put(g_dict, 'Hip-hop', {'min': 85, 'max': 115})
-    mp.put(g_dict, 'Jazz and Funk', {'min': 120, 'max': 120})
-    mp.put(g_dict, 'Pop', {'min': 100, 'max': 130})
-    mp.put(g_dict, 'R&B', {'min': 60, 'max': 80})
-    mp.put(g_dict, 'Rock', {'min': 110, 'max': 140})
-    mp.put(g_dict, 'Metal', {'min': 110, 'max': 160})
+    mp.put(g_dict, 'Reggae', {'min': 60.0, 'max': 90.0})
+    mp.put(g_dict, 'Down-tempo', {'min': 70.0, 'max': 100.0})
+    mp.put(g_dict, 'Chill-out', {'min': 90.0, 'max': 120.0})
+    mp.put(g_dict, 'Hip-hop', {'min': 85.0, 'max': 115.0})
+    mp.put(g_dict, 'Jazz and Funk', {'min': 120.0, 'max': 125.0})
+    mp.put(g_dict, 'Pop', {'min': 100.0, 'max': 130.0})
+    mp.put(g_dict, 'R&B', {'min': 60.0, 'max': 80.0})
+    mp.put(g_dict, 'Rock', {'min': 110.0, 'max': 140.0})
+    mp.put(g_dict, 'Metal', {'min': 100.0, 'max': 160.0))
     return catalog
 
 
