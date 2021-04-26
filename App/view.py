@@ -24,6 +24,8 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 import random
 assert cf
 
@@ -51,7 +53,7 @@ def printMenu():
 
 def printLoadInfo(answer):
     catalog = answer[0]
-    print("Total eventos de escucha:", lt.size(catalog['events']))
+    print("Total eventos de escucha:", controller.listSize(catalog['events']))
     print("Total eventos de artistas unicos:", answer[1])
     print("Total eventos de tracks unicos:", answer[2], '\n')
 
@@ -71,7 +73,7 @@ def printTracks(list_of_tracks):
     print('\n--- Unique track_id ---')
     statement = 'Track {}: {} with energy of {} and danceability of {}'
     for n in range(0, 5): 
-        random_pos = random.randint(1, lt.size(list_of_tracks))
+        random_pos = random.randint(1, controller.listSize(list_of_tracks))
         rand_item = lt.getElement(list_of_tracks, random_pos)
 
         print(statement.format(n+1, rand_item['track_id'], rand_item['energy'], rand_item['danceability']))
@@ -83,7 +85,7 @@ def printTracks2(list_of_tracks):
     print('\n--- Unique track_id ---')
     statement = 'Track {}: {} with instrumentalness of {} and tempo of {}'
     for n in range(0, 5): 
-        random_pos = random.randint(1, lt.size(list_of_tracks))
+        random_pos = random.randint(1, controller.listSize(list_of_tracks))
         rand_item = lt.getElement(list_of_tracks, random_pos)
 
         print(statement.format(n+1, rand_item['track_id'], rand_item['instrumentalness'], rand_item['tempo']))
@@ -164,9 +166,48 @@ while True:
             print('Total of unique tracks in events:', answer[1])
             printTracks2(answer[0])
         
-
     elif int(inputs[0]) == 6:
-        pass
+        genres = input("Genero(s) a buscar (separelos con un espacio): ").split()
+
+
+        for genre in genres: 
+            verf_genre = controller.getGenre(catalog, genre)
+            all_valid = True
+            if verf_genre is None:
+                new_genre = input('Desea crear un nuevo género? \n 1 - Si \n 2 - No \n>')
+                if new_genre == 1:
+                    min_tempo = input('Tempo minimo del género: ')
+                    max_tempo = input('Tempo máximo del género: ')
+                    controller.newGenre(catalog, genre, min_tempo, max_tempo)
+                else:
+                    print('El género ingresado no es válido, intentelo de nuevo.')
+                    all_valid = False
+
+        if all_valid:
+            answer = controller.genreStudy(catalog, genres)
+
+            print('++++++ Req No. 4 results... ++++++')
+            totalReps = controller.getReps(answer)
+            print('Total of reproductions: ', totalReps)
+
+            statement1 = "======== {} ========"
+            statement2 = "For {} the tempo is between {} and {} BPM"
+            statememnt3 = "{} reproductions: {} with {} different artists"
+            statememnt4 = "----- Some artists for {} -----"
+            statememnt5 = "Artist {}: {}"
+
+            for genre in lt.iterator(mp.keySet(answer)):
+                print(statement1.format(genre))
+                ranges = me.getValue(mp.get(catalog['genre_dictionary'], genre))
+                print(statement2.format(genre, ranges['min'], ranges['max']))
+                reps_tot = controller.listSize(me.getValue(mp.get(answer, genre))['list'])
+                arts_tot = controller.mapSize(me.getValue(mp.get(answer, genre))['unique_artists'])
+                print(statememnt3.format(genre, reps_tot, arts_tot))
+                print(statememnt4.format(genre))
+                for n in range(1, 11):
+                    element = lt.getElement(me.getValue(mp.get(answer, genre))['list'], n)
+                    print(statememnt5.format(n, element['artist_id']))
+                
     elif int(inputs[0]) == 7:
         pass
     else:

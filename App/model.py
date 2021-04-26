@@ -67,6 +67,7 @@ def addEvent(catalog, event):
     mp.put(catalog['unique_artists'], event['artist_id'], event)
     mp.put(catalog['unique_tracks'], event['track_id'], event)
     addCategory(catalog, event)
+    genreDictionary(catalog)
     return catalog
 
 
@@ -145,7 +146,18 @@ def addHashtag(catalog, event):
     return catalog
 
 
-
+def genreDictionary(catalog):
+    g_dict = catalog['genre_dictionary']
+    mp.put(g_dict, 'Reggae', {'min': 60, 'max': 90})
+    mp.put(g_dict, 'Down-tempo', {'min': 70, 'max': 100})
+    mp.put(g_dict, 'Chill-out', {'min': 90, 'max': 120})
+    mp.put(g_dict, 'Hip-hop', {'min': 85, 'max': 115})
+    mp.put(g_dict, 'Jazz and Funk', {'min': 120, 'max': 120})
+    mp.put(g_dict, 'Pop', {'min': 100, 'max': 130})
+    mp.put(g_dict, 'R&B', {'min': 60, 'max': 80})
+    mp.put(g_dict, 'Rock', {'min': 110, 'max': 140})
+    mp.put(g_dict, 'Metal', {'min': 110, 'max': 160})
+    return catalog
 
 
 # ==============================
@@ -219,10 +231,45 @@ def checkWithUser(catalog, event):
     for user_event in lt.iterator(me.getValue(user_events_on_date)):
         if (user_event['user_id'] == event['user_id']) and (user_event['track_id'] == event['track_id']):
             return True
-    
     return False
 
+"""Requerimiento 4"""
 
+def newGenre(catalog, name, min_tempo, max_tempo):
+    mp.put(catalog['genre_dictionary'], name, {'min': min_tempo, 'max': max_tempo})
+    return catalog
+
+def genresStudy(catalog, genres):
+    answers_map = mp.newMap(numelements=10, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
+    tempo_tree = me.getValue(mp.get(catalog['content_cateogries'], 'tempo'))
+    for genre in genres:
+        ranges = me.getValue(mp.get(catalog['genre_dictionary'], genre))
+        tempo_values = om.values(tempo_tree, ranges['min'], ranges['max'])
+
+        unique_artists = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
+        final_list = lt.newList(datastructure='ARRAY_LIST')
+
+        for sublist in lt.iterator(tempo_values):
+            for event in lt.iterator(sublist): 
+                if checkWithUser(catalog, event):
+                        lt.addLast(final_list, event)
+                        mp.put(unique_artists, event['artist_id'], event)
+        
+        mp.put(answers_map, genre, {'list': final_list, 'unique_artists': unique_artists})
+
+    return answers_map
+
+
+def getReps(answer):
+    totalReps = 0
+    for genre in lt.iterator(mp.keySet(answer)):
+        totalReps += listSize(me.getValue(mp.get(answer, genre))['list'])
+    
+    return totalReps
+        
+
+def mapSize(mps):
+    return mp.size(mps)
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -301,3 +348,16 @@ def getCateory(catalog, category):
         category_tree = me.getValue(category_info)
     return category_tree
     # return om.size(category_tree), om.height(category_tree)
+
+
+def listSize(lst):
+    return lt.size(lst)
+
+
+def getGenre(catalog, genre):
+    valid_g = mp.get(catalog['genre_dictionary'], genre)
+    valid = None
+    if valid_g is not None:
+        valid = valid_g
+    
+    return valid

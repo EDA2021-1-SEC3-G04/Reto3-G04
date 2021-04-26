@@ -86,3 +86,23 @@ def getCateory(catalog, category):
 
 def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
     return model.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
+
+def newGenre(catalog, name, min_tempo, max_tempo):
+    return model.newGenre(catalog, name, min_tempo, max_tempo)
+
+def genreStudy(catalog, genres):
+    return model.genresStudy(catalog, genres)
+    
+
+
+def listSize(lst): 
+    return model.listSize(lst)
+
+def mapSize(mps): 
+    return model.mapSize(mps)
+
+def getReps(answer): 
+    return model.getReps(answer)
+    
+def getGenre(catalog, genre):
+    return model.getGenre(catalog, genre)
