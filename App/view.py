@@ -28,6 +28,8 @@ from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 import random
 assert cf
+import datetime as dt
+import time 
 
 
 """
@@ -209,7 +211,13 @@ while True:
                     print(statememnt5.format(n, element['artist_id']))
                 
     elif int(inputs[0]) == 7:
-        pass
+        min_time = (input('El valor mínimo de la hora del día: '))
+        max_time = (input('El valor máximo de la hora del día: '))
+
+        min_time = dt.datetime.strptime(min_time,("%H:%M:%S"))
+        max_time = dt.datetime.strptime(max_time,("%H:%M:%S"))
+        answer = controller.genreMostListened(catalog, min_time.time(), max_time.time())
+
     else:
         sys.exit(0)
 sys.exit(0)

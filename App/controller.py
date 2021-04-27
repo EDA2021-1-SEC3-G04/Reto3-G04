@@ -106,3 +106,6 @@ def getReps(answer):
     
 def getGenre(catalog, genre):
     return model.getGenre(catalog, genre)
+
+def genreMostListened(catalog, min_time, max_time): 
+    return model.genreMostListened(catalog, min_time, max_time)

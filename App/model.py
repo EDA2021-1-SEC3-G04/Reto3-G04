@@ -133,10 +133,10 @@ def contentCreatedAt(catalog, event):
     mapDates = catalog["content_created_at"] 
     eventDate = event["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(mapDates, eventDate.date())
+    entry = om.get(mapDates, eventDate)
     if entry is None: 
         datentry = lt.newList()
-        om.put(mapDates, eventDate.date(), datentry) 
+        om.put(mapDates, eventDate, datentry) 
     else:
         datentry = me.getValue(entry)
     
@@ -147,10 +147,10 @@ def addUserInfo(catalog, userInfo):
     mapDates = catalog["user_created_at"] 
     eventDate = userInfo["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(mapDates, eventDate.date())
-    if entry is None: 
+    entry = om.get(mapDates, eventDate)
+    if entry is None:
         datentry = lt.newList()
-        om.put(mapDates, eventDate.date(), datentry) 
+        om.put(mapDates, eventDate, datentry) 
     else:
         datentry = me.getValue(entry)
     
@@ -288,6 +288,14 @@ def getReps(answer):
 
 def mapSize(mps):
     return mp.size(mps)
+
+
+"""Requerimiento 5"""
+def genreMostListened(catalog, min_time, max_time): 
+    map_dates = catalog["content_created_at"]
+    map_dates["cmpfunction"] = cmpTimes 
+    events_TimeDate = om.values (map_dates, min_time, max_time)
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
