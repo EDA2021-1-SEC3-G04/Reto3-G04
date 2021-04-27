@@ -53,6 +53,9 @@ def newCatalog():
     catalog['unique_artists'] = mp.newMap(numelements=50000, maptype='CHAINING', loadfactor=0.5,  comparefunction = cmpCategories)
     catalog['unique_tracks'] = mp.newMap(numelements=50000, maptype='CHAINING', loadfactor=0.5, comparefunction = cmpCategories)
     catalog['genre_dictionary'] = mp.newMap(numelements=100, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
+    catalog['content_created_at'] = om.newMap(omaptype='RBT',
+                                      comparefunction=cmpDates)
+                                      # TODO: compare times
     return catalog
 
 
@@ -68,6 +71,7 @@ def addEvent(catalog, event):
     mp.put(catalog['unique_tracks'], event['track_id'], event)
     addCategory(catalog, event)
     genreDictionary(catalog)
+    contentCreatedAt(catalog, event)
     return catalog
 
 
@@ -124,6 +128,20 @@ def createCategTree():
     tree = om.newMap(omaptype='RBT', comparefunction=cmpCategories2)
     return tree
 
+
+def contentCreatedAt(catalog, event): 
+    mapDates = catalog["content_created_at"] 
+    eventDate = event["created_at"]
+    eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(mapDates, eventDate.date())
+    if entry is None: 
+        datentry = lt.newList()
+        om.put(mapDates, eventDate.date(), datentry) 
+    else:
+        datentry = me.getValue(entry)
+    
+    lt.addLast(datentry, event)
+    return catalog
 
 def addUserInfo(catalog, userInfo): 
     mapDates = catalog["user_created_at"] 
@@ -327,6 +345,19 @@ def cmpUnique(artist1, artist2):
         return 1
     else: 
         return 0
+
+def cmpTimes(time1, datetime2): 
+    time2 = datetime2.time()
+
+    if time1 > time2:
+        return 1
+    elif time1 < time2:
+        return -1
+    else:
+        return 0
+
+
+# datetime.time()¶
 # Funciones de ordenamiento
 
 
