@@ -134,6 +134,9 @@ def contentCreatedAt(catalog, event):
     mapDates = catalog["content_created_at"] 
     eventDate = event["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
+
+    # evenTime = eventDate.time()
+    
     entry = om.get(mapDates, eventDate)
     if entry is None: 
         datentry = lt.newList()
@@ -297,7 +300,7 @@ def mapSize(mps):
 
 def genreMostListened(catalog, min_time, max_time): 
     map_dates = catalog["content_created_at"]
-    map_dates["cmpfunction"] = cmpTimes 
+    # map_dates["cmpfunction"] = cmpTimes 
     events_TimeDate = om.values(map_dates, min_time, max_time)
 
     print(lt.size(events_TimeDate))
