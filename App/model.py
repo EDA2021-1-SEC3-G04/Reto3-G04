@@ -57,6 +57,9 @@ def newCatalog():
                                       comparefunction=cmpDates)
                                       # TODO: compare times
     catalog['tracks_hashtag'] = mp.newMap(numelements=100000, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
+    catalog['content_time'] = om.newMap(omaptype='RBT', comparefunction=cmpTimes)
+    catalog['user_times'] = om.newMap(omaptype='RBT', comparefunction=cmpTimes)
+    
     return catalog
 
 
@@ -73,6 +76,7 @@ def addEvent(catalog, event):
     addCategory(catalog, event)
     genreDictionary(catalog)
     contentCreatedAt(catalog, event)
+    content_time(catalog, event)
     return catalog
 
 
@@ -147,6 +151,37 @@ def contentCreatedAt(catalog, event):
     lt.addLast(datentry, event)
     return catalog
 
+def content_time(catalog, event): 
+    mapDates = catalog["content_time"] 
+    eventDate = event["created_at"]
+    eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
+    eventTime = eventDate.time()
+    entry = om.get(mapDates, eventTime)
+    if entry is None: 
+        datentry = lt.newList()
+        om.put(mapDates, eventTime, datentry) 
+    else:
+        datentry = me.getValue(entry)
+    
+    lt.addLast(datentry, event)
+    return catalog
+
+def user_time(catalog, event): 
+    mapDates = catalog["user_times"] 
+    eventDate = event["created_at"]
+    eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
+    eventTime = eventDate.time()
+    entry = om.get(mapDates, eventTime)
+    if entry is None: 
+        datentry = lt.newList()
+        om.put(mapDates, eventTime, datentry) 
+    else:
+        datentry = me.getValue(entry)
+    
+    lt.addLast(datentry, event)
+    return catalog
+
+
 def addUserInfo(catalog, userInfo): 
     mapDates = catalog["user_created_at"] 
     eventDate = userInfo["created_at"]
@@ -159,6 +194,7 @@ def addUserInfo(catalog, userInfo):
         datentry = me.getValue(entry)
     
     lt.addLast(datentry, userInfo)
+    user_time(catalog,userInfo)
     return catalog
 
 
@@ -299,15 +335,13 @@ def mapSize(mps):
 """Requerimiento 5"""
 
 def genreMostListened(catalog, min_time, max_time): 
-    map_dates = catalog["content_created_at"]
+    map_dates = catalog["content_time"]
     # map_dates["cmpfunction"] = cmpTimes 
     events_TimeDate = om.values(map_dates, min_time, max_time)
 
     print(lt.size(events_TimeDate))
     genre_reps = mp.newMap(numelements=15, maptype='PROBING', comparefunction=cmpCategories)
-
     # {'reps': 134, 'tracks': lista}
-
     # recorrer la lista
     total = 0
     total2 = 0
@@ -322,14 +356,13 @@ def genreMostListened(catalog, min_time, max_time):
 
     print(total)
     print(total2)
-    print(genre_reps)
 
 
 
 def checkWithUserV2(catalog, event):
     event_date = event['created_at']
     event_date = datetime.datetime.strptime(event_date, '%Y-%m-%d %H:%M:%S')
-    user_events_on_date = om.get(catalog['user_created_at'], event_date)
+    user_events_on_date = om.get(catalog['user_times'], event_date.time())
 
     for user_event in lt.iterator(me.getValue(user_events_on_date)):
         if (user_event['user_id'] == event['user_id']) and (user_event['track_id'] == event['track_id']):
@@ -433,9 +466,7 @@ def cmpUnique(artist1, artist2):
     else: 
         return 0
 
-def cmpTimes(time1, datetime2): 
-    time2 = datetime2.time()
-
+def cmpTimes(time1, time2): 
     if time1 > time2:
         return 1
     elif time1 < time2:
@@ -446,9 +477,6 @@ def cmpTimes(time1, datetime2):
 
 # datetime.time()¶
 # Funciones de ordenamiento
-
-
-
  
 
 def countArtist(catalog):
