@@ -56,6 +56,7 @@ def newCatalog():
     catalog['content_created_at'] = om.newMap(omaptype='RBT',
                                       comparefunction=cmpDates)
                                       # TODO: compare times
+    catalog['tracks_hashtag'] = mp.newMap(numelements=100000, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
     return catalog
 
 
@@ -244,7 +245,9 @@ def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo
 def checkWithUser(catalog, event):
     event_date = event['created_at']
     event_date = datetime.datetime.strptime(event_date, '%Y-%m-%d %H:%M:%S')
-    user_events_on_date = om.get(catalog['user_created_at'], event_date.date())
+    user_events_on_date = om.get(catalog['user_created_at'], event_date)
+
+    # event_date.date() lo quitamos
 
     for user_event in lt.iterator(me.getValue(user_events_on_date)):
         if (user_event['user_id'] == event['user_id']) and (user_event['track_id'] == event['track_id']):
@@ -270,8 +273,8 @@ def genresStudy(catalog, genres):
         for sublist in lt.iterator(tempo_values):
             for event in lt.iterator(sublist): 
                 if checkWithUser(catalog, event):
-                        lt.addLast(final_list, event)
-                        mp.put(unique_artists, event['artist_id'], event)
+                    lt.addLast(final_list, event)
+                    mp.put(unique_artists, event['artist_id'], event)
         
         mp.put(answers_map, genre, {'list': final_list, 'unique_artists': unique_artists})
 
@@ -291,10 +294,83 @@ def mapSize(mps):
 
 
 """Requerimiento 5"""
+
 def genreMostListened(catalog, min_time, max_time): 
     map_dates = catalog["content_created_at"]
     map_dates["cmpfunction"] = cmpTimes 
-    events_TimeDate = om.values (map_dates, min_time, max_time)
+    events_TimeDate = om.values(map_dates, min_time, max_time)
+
+    print(lt.size(events_TimeDate))
+    genre_reps = mp.newMap(numelements=15, maptype='PROBING', comparefunction=cmpCategories)
+
+    # {'reps': 134, 'tracks': lista}
+
+    # recorrer la lista
+    total = 0
+    total2 = 0
+    for sublist in lt.iterator(events_TimeDate):
+        total += lt.size(sublist)
+        for event in lt.iterator(sublist): 
+            if checkWithUserV2(catalog, event):
+                total2 += 1
+                tempo = event['tempo']
+                track = event['track_id']
+                matchTempo(catalog, tempo, genre_reps, track)
+
+    print(total)
+    print(total2)
+    print(genre_reps)
+
+
+
+def checkWithUserV2(catalog, event):
+    event_date = event['created_at']
+    event_date = datetime.datetime.strptime(event_date, '%Y-%m-%d %H:%M:%S')
+    user_events_on_date = om.get(catalog['user_created_at'], event_date)
+
+    for user_event in lt.iterator(me.getValue(user_events_on_date)):
+        if (user_event['user_id'] == event['user_id']) and (user_event['track_id'] == event['track_id']):
+            updateTrackHashtags(catalog, user_event)
+            return True
+    return False
+
+
+def updateTrackHashtags(catalog, event):
+    entry = mp.get(catalog['tracks_hashtag'], event['track_id'])
+    if entry is None:
+        hashtags = lt.newList()
+        mp.put(catalog['tracks_hashtag'], event['track_id'], hashtags) 
+    else:
+        hashtags = me.getValue(entry)
+    
+    lt.addLast(hashtags, event['hashtag'].lower())
+    return catalog
+
+def matchTempo(catalog, tempo, genre_reps, track):
+    genre_map = catalog['genre_dictionary']
+
+    for genre in lt.iterator(mp.keySet(genre_map)):
+        ranges = me.getValue(mp.get(genre_map, genre))
+
+        if ranges['min'] <= float(tempo) <= ranges['max']:
+            g_reps = mp.get(genre_reps, genre)
+
+            if g_reps is None:
+                reps = 0
+                tracks = lt.newList(datastructure='ARRAY_LIST')
+            else:
+                reps = me.getValue(g_reps)['reps']
+                tracks = me.getValue(g_reps)['tracks']
+                
+            reps += 1
+            lt.addLast(tracks, track)
+            mp.put(genre_reps, genre, {'reps': reps, 'tracks': tracks})
+
+
+        
+
+        
+
 
 # ==============================
 # Funciones de Comparacion
