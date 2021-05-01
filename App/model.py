@@ -160,10 +160,12 @@ def content_time(catalog, event):
     if entry is None: 
         datentry = lt.newList()
         om.put(mapDates, eventTime, datentry) 
-    else:
-        datentry = me.getValue(entry)
+        
+    entry = om.get(mapDates, eventTime)  
+    datentry = me.getValue(entry)
     
     lt.addLast(datentry, event)
+    om.put(mapDates, eventTime, datentry)
     return catalog
 
 def user_time(catalog, event): 
@@ -179,6 +181,7 @@ def user_time(catalog, event):
         datentry = me.getValue(entry)
     
     lt.addLast(datentry, event)
+    om.put(mapDates, eventTime, datentry)
     return catalog
 
 
@@ -338,8 +341,12 @@ def genreMostListened(catalog, min_time, max_time):
     map_dates = catalog["content_time"]
     # map_dates["cmpfunction"] = cmpTimes 
     events_TimeDate = om.values(map_dates, min_time, max_time)
-
-    print(lt.size(events_TimeDate))
+    
+    keys = om.keys(map_dates, min_time, max_time)
+    total_1 = 0
+    for key in lt.iterator(keys):
+        total_1 += lt.size(me.getValue(om.get(map_dates, key)))
+    print('total:', total_1)
     genre_reps = mp.newMap(numelements=15, maptype='PROBING', comparefunction=cmpCategories)
     # {'reps': 134, 'tracks': lista}
     # recorrer la lista
@@ -347,8 +354,11 @@ def genreMostListened(catalog, min_time, max_time):
     total2 = 0
     for sublist in lt.iterator(events_TimeDate):
         total += lt.size(sublist)
+
         for event in lt.iterator(sublist): 
             if checkWithUserV2(catalog, event):
+                if'09:45:00' in event['created_at']:
+                    print('yes')
                 total2 += 1
                 tempo = event['tempo']
                 track = event['track_id']
@@ -356,6 +366,7 @@ def genreMostListened(catalog, min_time, max_time):
 
     print(total)
     print(total2)
+
 
 
 
