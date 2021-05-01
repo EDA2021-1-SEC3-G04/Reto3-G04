@@ -364,11 +364,23 @@ def genreMostListened(catalog, min_time, max_time):
                 track = event['track_id']
                 matchTempo(catalog, tempo, genre_reps, track)
 
+    top_reps = 0 
+    top_genre= ""
+    for genre in lt.iterator(mp.keySet(genre_reps))
+        get_genre = mp.get(genre_reps, genre)
+        reps = mp.getValue(get_genre)["reps"]
+        if reps > top_reps:
+            top_reps = reps
+            top_genre = me.getKey(get_genre)
+
+    info_top_genre(catalog, top_genre, genre_reps)    
+
     print(total)
     print(total2)
 
-
-
+def info_top_genre(catalog, top_genre, genre_reps): 
+    top_genre_tracks = me.getValue(mp.get(genre_reps,top_genre))["tracks"]
+    
 
 def checkWithUserV2(catalog, event):
     event_date = event['created_at']
@@ -404,18 +416,19 @@ def matchTempo(catalog, tempo, genre_reps, track):
 
             if g_reps is None:
                 reps = 0
-                tracks = lt.newList(datastructure='ARRAY_LIST')
+                tracks = mp.newMap(numelements=5000,maptype="PROBING", loadfactor=0.5)
             else:
                 reps = me.getValue(g_reps)['reps']
                 tracks = me.getValue(g_reps)['tracks']
-                
             reps += 1
-            lt.addLast(tracks, track)
+            get = mp.get(tracks,track)
+            if get is None: 
+                track_reps = 0
+                mp.put(tracks,track,track_reps)
+            track_reps = me.getValue(mp.get(tracks, track))
+            track_reps += 1
+            mp.put(tracks,track,track_reps)
             mp.put(genre_reps, genre, {'reps': reps, 'tracks': tracks})
-
-
-        
-
         
 
 
