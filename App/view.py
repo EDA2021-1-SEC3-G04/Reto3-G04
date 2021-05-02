@@ -97,6 +97,21 @@ contextcontentfile ='/subsamples-small/context_content_features-small.csv'
 sentimentvaluesfile = '/subsamples-small/sentiment_values.csv'
 usertrackhashtagtimestampsfile = '/subsamples-small/user_track_hashtag_timestamp-small.csv'
 
+def print_tracks(tracks_sort):
+    n=1
+    rta = "TOP {} track: {} with {} hashtags and VADER = {}"
+    for track in lt.iterator(tracks_sort): 
+        print(rta.format(n,track["track"],track["num_hashtags"], track["average"]))
+        n += 1
+
+def print_genre_reps(reps_sort):
+    n=1
+    rta = "TOP {}: {} with {} reps"
+    for genre in lt.iterator(reps_sort):
+        print (rta.format(n,genre["genre"],genre["reps"]))
+        n += 1
+    top = lt.firstElement(reps_sort)
+    print ("\nThe TOP GENRE is {} with {} reproductions...".format(top["genre"],top["reps"]))
 
 """
 Menu principal
@@ -217,6 +232,20 @@ while True:
         min_time = dt.datetime.strptime(min_time,("%H:%M:%S"))
         max_time = dt.datetime.strptime(max_time,("%H:%M:%S"))
         answer = controller.genreMostListened(catalog, min_time.time(), max_time.time())
+        total_reps = answer[0]
+        top_genre = answer[1]
+        reps_sort = answer[2]
+        tracks_sort = answer[3][0]
+        total_tracks = answer [3][1]
+        print('\n \n++++++Req No. 5 results... ++++++')
+        print("There is a total of {} reproductions between {} and {}".format(total_reps, min_time.time(), max_time.time()))
+        print("====================== GENRES SORTED REPRODUCTIONS ======================")
+        print_genre_reps(reps_sort)
+        print("\n========================== {} SENTIMENT ANALYSIS =========================".format(top_genre))
+        print("{} has {} unique tracks...".format(top_genre,total_tracks))
+        print("The first TOP 10 tracks are..\n")
+        print_tracks(tracks_sort)
+
 
     else:
         sys.exit(0)

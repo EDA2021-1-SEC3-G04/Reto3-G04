@@ -34,6 +34,7 @@ from DISClib.Algorithms.Sorting import shellsort as sa
 import datetime
 from DISClib.Algorithms.Sorting import mergesort as mer
 assert cf
+import random
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -364,26 +365,46 @@ def genreMostListened(catalog, min_time, max_time):
         total += reps
     reps_sort = sort_list.copy()
     reps_sort = mer.sort(reps_sort, cmpGenre)
-
-    print(total)
-
-    #top_reps = 0 
-    #top_genre= ""
-    # for genre in lt.iterator(mp.keySet(genre_reps)):
-    #     get_genre = mp.get(genre_reps, genre)
-    #     reps = me.getValue(get_genre)["reps"]
-    #     if reps > top_reps:
-    #         top_reps = reps
-    #         top_genre = me.getKey(get_genre)
-
-    info_top_genre(catalog, top_genre, genre_reps)    
-    print(top_genre)
-    print(total)
-    print(total2)
+    top_genre = lt.firstElement(reps_sort)["genre"]
+    tracks_sort = info_top_genre(catalog, top_genre, genre_reps) 
+    return total, top_genre, reps_sort, tracks_sort   
+   
 
 def info_top_genre(catalog, top_genre, genre_reps): 
     top_genre_tracks = me.getValue(mp.get(genre_reps,top_genre))["tracks"]
+    list_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
+    list_final_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
+    map_final_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
+    for track in lt.iterator(top_genre_tracks):
+        hashtags = me.getValue(mp.get(catalog['tracks_hashtag'], track))
+        num_hashtags = lt.size(hashtags)
+        mp.put(map_final_tracks, track, "")
 
+        average = 0 
+        for hashtag in lt.iterator(hashtags): 
+            vader = mp.get(catalog["sentimentvalues"], hashtag.lower())
+            print(vader)
+            if (vader is not None): 
+                vader = me.getValue(vader)
+                if (vader != ''):
+                    average += float(vader)
+            else: 
+                num_hashtags -= 1
+    
+        if num_hashtags>1: 
+            average = average/num_hashtags
+        track_info = {'track': track, 'num_hashtags': num_hashtags, 'average': average}
+        lt.addLast(list_tracks, track_info)
+
+    for n in range(0,10): 
+        random_pos = random.randint(1,lt.size(list_tracks))
+        random_track = lt.getElement(list_tracks, random_pos)
+        lt.addLast(list_final_tracks, random_track)
+        
+    reps_sort = list_final_tracks.copy()
+    reps_sort = mer.sort(reps_sort, cmpNumHashtags)
+
+    return reps_sort, mp.size(map_final_tracks)
 
 def checkWithUserV2(catalog, event):
     event_date = event['created_at']
@@ -419,25 +440,26 @@ def matchTempo(catalog, tempo, genre_reps, track):
 
             if g_reps is None:
                 reps = 0
-                tracks = mp.newMap(numelements=5000,maptype="PROBING", loadfactor=0.5)
+                tracks = lt.newList(datastructure='ARRAY_LIST')
             else:
                 reps = me.getValue(g_reps)['reps']
                 tracks = me.getValue(g_reps)['tracks']
+                
             reps += 1
-            get = mp.get(tracks,track)
-            if get is None: 
-                track_reps = 0
-                mp.put(tracks,track,track_reps)
-            track_reps = me.getValue(mp.get(tracks, track))
-            track_reps += 1
-            mp.put(tracks,track,track_reps)
+            lt.addLast(tracks, track)
             mp.put(genre_reps, genre, {'reps': reps, 'tracks': tracks})
+    return catalog
         
 
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def cmpNumHashtags(dict1,dict2):
+    reps_1 = dict1["num_hashtags"]
+    reps_2 = dict2["num_hashtags"]
+    return reps_1 > reps_2
+
 
 def cmpGenre(dict1,dict2):
     reps_1 = dict1["reps"]
