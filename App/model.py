@@ -32,6 +32,7 @@ from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 import datetime
+from DISClib.Algorithms.Sorting import mergesort as mer
 assert cf
 
 """
@@ -341,12 +342,6 @@ def genreMostListened(catalog, min_time, max_time):
     map_dates = catalog["content_time"]
     # map_dates["cmpfunction"] = cmpTimes 
     events_TimeDate = om.values(map_dates, min_time, max_time)
-    
-    keys = om.keys(map_dates, min_time, max_time)
-    total_1 = 0
-    for key in lt.iterator(keys):
-        total_1 += lt.size(me.getValue(om.get(map_dates, key)))
-    print('total:', total_1)
     genre_reps = mp.newMap(numelements=15, maptype='PROBING', comparefunction=cmpCategories)
     # {'reps': 134, 'tracks': lista}
     # recorrer la lista
@@ -357,30 +352,38 @@ def genreMostListened(catalog, min_time, max_time):
 
         for event in lt.iterator(sublist): 
             if checkWithUserV2(catalog, event):
-                if'09:45:00' in event['created_at']:
-                    print('yes')
-                total2 += 1
                 tempo = event['tempo']
                 track = event['track_id']
                 matchTempo(catalog, tempo, genre_reps, track)
+    
+    sort_list = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpGenre)
+    total = 0
+    for genre in lt.iterator(mp.keySet(genre_reps)):
+        reps = me.getValue(mp.get(genre_reps,genre))["reps"]
+        lt.addLast(sort_list,{"genre":genre, "reps":reps})
+        total += reps
+    reps_sort = sort_list.copy()
+    reps_sort = mer.sort(reps_sort, cmpGenre)
 
-    top_reps = 0 
-    top_genre= ""
-    for genre in lt.iterator(mp.keySet(genre_reps))
-        get_genre = mp.get(genre_reps, genre)
-        reps = mp.getValue(get_genre)["reps"]
-        if reps > top_reps:
-            top_reps = reps
-            top_genre = me.getKey(get_genre)
+    print(total)
+
+    #top_reps = 0 
+    #top_genre= ""
+    # for genre in lt.iterator(mp.keySet(genre_reps)):
+    #     get_genre = mp.get(genre_reps, genre)
+    #     reps = me.getValue(get_genre)["reps"]
+    #     if reps > top_reps:
+    #         top_reps = reps
+    #         top_genre = me.getKey(get_genre)
 
     info_top_genre(catalog, top_genre, genre_reps)    
-
+    print(top_genre)
     print(total)
     print(total2)
 
 def info_top_genre(catalog, top_genre, genre_reps): 
     top_genre_tracks = me.getValue(mp.get(genre_reps,top_genre))["tracks"]
-    
+
 
 def checkWithUserV2(catalog, event):
     event_date = event['created_at']
@@ -435,6 +438,12 @@ def matchTempo(catalog, tempo, genre_reps, track):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def cmpGenre(dict1,dict2):
+    reps_1 = dict1["reps"]
+    reps_2 = dict2["reps"]
+    return reps_1 > reps_2
+
 
 
 def cmpHashtags(hashtag1, hashtag2):
