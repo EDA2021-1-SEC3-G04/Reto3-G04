@@ -248,7 +248,7 @@ while True:
             print("The first TOP 10 tracks are..\n")
             print_tracks(tracks_sort)
         else: 
-            print("Rangos de tiempo inválidos")
+            print("\n Rangos de tiempo inválidos")
 
 
     else:
