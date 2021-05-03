@@ -89,22 +89,79 @@ def loadUserTrackHashtag(catalog, userhashtagsfile):
 # Funciones de consulta sobre el catálogo"""
 
 def categoryCaracterization(catalog, categoria, min_range, max_range):
-    return model.categoryCaracterization(catalog, categoria, min_range, max_range)
+    delta_time = -1.0
+    delta_memory = -1.0
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+
+    answer = model.categoryCaracterization(catalog, categoria, min_range, max_range)
+
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    return answer, delta_time, delta_memory
 
 def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity):
-    return model.partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity)
+    delta_time = -1.0
+    delta_memory = -1.0
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+
+    answer = model.partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity)
+
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    return answer, delta_time, delta_memory
+
 
 def getCateory(catalog, category): 
     return model.getCateory(catalog, category)
 
 def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
-    return model.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
+    delta_time = -1.0
+    delta_memory = -1.0
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+
+    answer = model.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
+
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    return answer, delta_time, delta_memory
 
 def newGenre(catalog, name, min_tempo, max_tempo):
     return model.newGenre(catalog, name, min_tempo, max_tempo)
 
 def genreStudy(catalog, genres):
-    return model.genresStudy(catalog, genres)
+    delta_time = -1.0
+    delta_memory = -1.0
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+
+    answer = model.genresStudy(catalog, genres)
+
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    return answer, delta_time, delta_memory
     
 
 
@@ -121,7 +178,21 @@ def getGenre(catalog, genre):
     return model.getGenre(catalog, genre)
 
 def genreMostListened(catalog, min_time, max_time): 
-    return model.genreMostListened(catalog, min_time, max_time)
+    delta_time = -1.0
+    delta_memory = -1.0
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+    
+    answer = model.genreMostListened(catalog, min_time, max_time)
+
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    return answer, delta_time, delta_memory
 
 
 # ======================================

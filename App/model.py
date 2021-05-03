@@ -383,7 +383,6 @@ def info_top_genre(catalog, top_genre, genre_reps):
         average = 0 
         for hashtag in lt.iterator(hashtags): 
             vader = mp.get(catalog["sentimentvalues"], hashtag.lower())
-            print(vader)
             if (vader is not None): 
                 vader = me.getValue(vader)
                 if (vader != ''):

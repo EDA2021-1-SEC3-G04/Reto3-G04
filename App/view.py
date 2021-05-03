@@ -126,6 +126,10 @@ while True:
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
         answer = controller.loadData(catalog, contextcontentfile, sentimentvaluesfile, usertrackhashtagtimestampsfile)
+
+        print("\n***  Medidas de tiempo y espacio   ***")
+        print("Tiempo [ms]: ", f"{answer[3]:.3f}", "  ||  ",
+                "Memoria [kB]: ", f"{answer[4]:.3f}\n\n")
         printLoadInfo(answer)       
 
     elif int(inputs[0]) == 3:
@@ -141,6 +145,11 @@ while True:
             else: 
                 answer = controller.categoryCaracterization(catalog, category, min_range, max_range)
 
+                print("\n***  Medidas de tiempo y espacio   ***")
+                print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+                         "Memoria [kB]: ", f"{answer[2]:.3f}\n\n")
+                
+                answer = answer[0]
                 print('\n\n++++++ Req No. 1 results... ++++++')
                 statement1 = "{} is between {} and {}"
                 statement2 = "Total of reproduction: {} \t Total unique artists {}"
@@ -160,6 +169,12 @@ while True:
         else:
             answer = controller.partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceability)
 
+            print("\n***  Medidas de tiempo y espacio   ***")
+            print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+                         "Memoria [kB]: ", f"{answer[2]:.3f}\n\n")
+                
+            answer = answer[0]
+
             print('\n \n++++++ Req No. 2 results... ++++++')
             print('Energy is between', min_energy, 'and', max_energy)
             print('Danceability is between', min_danceability, 'and', max_danceability)
@@ -176,6 +191,12 @@ while True:
             print('Rangos inválidos, inténtelo de nuevo')
         else:
             answer = controller.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
+
+            print("\n***  Medidas de tiempo y espacio   ***")
+            print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+                    "Memoria [kB]: ", f"{answer[2]:.3f}\n\n")
+                
+            answer = answer[0]
 
             print('\n \n++++++ Req No. 3 results... ++++++')
             print('Tempo is between', min_tempo, 'and', max_tempo)
@@ -202,6 +223,12 @@ while True:
 
         if all_valid:
             answer = controller.genreStudy(catalog, genres)
+
+            print("\n***  Medidas de tiempo y espacio   ***")
+            print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+                         "Memoria [kB]: ", f"{answer[2]:.3f}\n\n")
+                
+            answer = answer[0]
 
             print('\n \n++++++ Req No. 4 results... ++++++')
             totalReps = controller.getReps(answer)
@@ -231,12 +258,19 @@ while True:
 
         min_time = dt.datetime.strptime(min_time,("%H:%M:%S"))
         max_time = dt.datetime.strptime(max_time,("%H:%M:%S"))
+
         answer = controller.genreMostListened(catalog, min_time.time(), max_time.time())
+
+        print("\n***  Medidas de tiempo y espacio   ***")
+        print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+                         "Memoria [kB]: ", f"{answer[2]:.3f}\n\n")
+                
+        answer = answer[0]
         total_reps = answer[0]
         top_genre = answer[1]
         reps_sort = answer[2]
         tracks_sort = answer[3][0]
-        total_tracks = answer [3][1]
+        total_tracks = answer[3][1]
         print('\n \n++++++Req No. 5 results... ++++++')
         print("There is a total of {} reproductions between {} and {}".format(total_reps, min_time.time(), max_time.time()))
         print("====================== GENRES SORTED REPRODUCTIONS ======================")
