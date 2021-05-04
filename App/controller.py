@@ -31,11 +31,13 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 # Inicialización del Catálogo de libros
 
+
 def init(): 
     catalog = model.newCatalog()
     return catalog
 
 # Funciones para la carga de datos
+
 
 def loadData(catalog, contextcontentfile, sentimentvaluesfile, userhashtagsfile):
     loadContext(catalog, contextcontentfile)
@@ -43,7 +45,6 @@ def loadData(catalog, contextcontentfile, sentimentvaluesfile, userhashtagsfile)
     loadSentimentValues(catalog, sentimentvaluesfile)
     artists = model.countArtist(catalog)
     tracks = model.countTracks(catalog)
-    
     return catalog, artists, tracks
 
 
@@ -55,6 +56,7 @@ def loadSentimentValues(catalog, sentimentvaluesfile):
         model.addHashtag(catalog, hashtag)
     return catalog
 
+
 def loadContext(catalog, contextcontefile): 
     contextcontentfile = cf.data_dir + contextcontefile
     input_file = csv.DictReader(open(contextcontentfile, encoding="utf-8"),
@@ -62,6 +64,7 @@ def loadContext(catalog, contextcontefile):
     for event in input_file:
         model.addEvent(catalog, event)
     return catalog
+
 
 def loadUserTrackHashtag(catalog, userhashtagsfile): 
     userhashtagsfile = cf.data_dir + userhashtagsfile
@@ -73,39 +76,56 @@ def loadUserTrackHashtag(catalog, userhashtagsfile):
 
 # Funciones de ordenamiento
 
-# Funciones de consulta sobre el catálogo"""
+# Funciones de consulta sobre el catálogo"
+
 
 def categoryCaracterization(catalog, categoria, min_range, max_range):
+    """Requerimiento 1"""
     return model.categoryCaracterization(catalog, categoria, min_range, max_range)
 
+
 def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity):
+    """Requerimiento 2"""
     return model.partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity)
+
+
+def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
+    """Requerimiento 3"""
+    return model.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
+
+
+def genreStudy(catalog, genres):
+    """Requerimiento 4"""
+    return model.genresStudy(catalog, genres)
+
+
+def newGenre(catalog, name, min_tempo, max_tempo):
+    return model.newGenre(catalog, name, min_tempo, max_tempo)
+  
+
+def genreMostListened(catalog, min_time, max_time): 
+    """Requerimiento 5"""
+    return model.genreMostListened(catalog, min_time, max_time)
+
+
+def getGenre(catalog, genre):
+    return model.getGenre(catalog, genre)
+
 
 def getCateory(catalog, category): 
     return model.getCateory(catalog, category)
 
-def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
-    return model.relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo)
 
-def newGenre(catalog, name, min_tempo, max_tempo):
-    return model.newGenre(catalog, name, min_tempo, max_tempo)
-
-def genreStudy(catalog, genres):
-    return model.genresStudy(catalog, genres)
-    
+def getReps(answer): 
+    return model.getReps(answer)
 
 
 def listSize(lst): 
     return model.listSize(lst)
 
+
 def mapSize(mps): 
     return model.mapSize(mps)
 
-def getReps(answer): 
-    return model.getReps(answer)
-    
-def getGenre(catalog, genre):
-    return model.getGenre(catalog, genre)
 
-def genreMostListened(catalog, min_time, max_time): 
-    return model.genreMostListened(catalog, min_time, max_time)
+

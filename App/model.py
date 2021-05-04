@@ -30,11 +30,11 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
-from DISClib.Algorithms.Sorting import shellsort as sa
 import datetime
 from DISClib.Algorithms.Sorting import mergesort as mer
-assert cf
 import random
+assert cf
+
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -44,6 +44,7 @@ los mismos.
 # ==============================
 # Construcción de modelos
 # ==============================
+
 
 def newCatalog():
     catalog = {'sentimentvalues': None, 'events': None, 'content_cateogires':None, 'user_created_at': None}
@@ -61,7 +62,6 @@ def newCatalog():
     catalog['tracks_hashtag'] = mp.newMap(numelements=100000, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
     catalog['content_time'] = om.newMap(omaptype='RBT', comparefunction=cmpTimes)
     catalog['user_times'] = om.newMap(omaptype='RBT', comparefunction=cmpTimes)
-    
     return catalog
 
 
@@ -71,6 +71,7 @@ def newCatalog():
 
 def addEvent(catalog, event):
     """
+    Carga info del archivo content_context a diferentes estructuras
     """
     lt.addLast(catalog['events'], event)
     mp.put(catalog['unique_artists'], event['artist_id'], event)
@@ -83,6 +84,7 @@ def addEvent(catalog, event):
 
 
 def addCategory(catalog, event): 
+    """Arbol por categorias"""
     category_map = catalog['content_cateogries']
     keys = mp.keySet(category_map)
     if lt.size(keys) <= 0: 
@@ -92,7 +94,7 @@ def addCategory(catalog, event):
         valor_item = float(event[item])
 
         cate_tree = me.getValue(mp.get(category_map, item))
-        if cate_tree is None: 
+        if cate_tree is None:
             cate_tree = createCategTree()
             mp.put(category_map, item, cate_tree)
 
@@ -113,6 +115,7 @@ def addCategory(catalog, event):
             
 
 def fillHashMap(map_cate):
+    """HashMap de categorias"""
     event_cols = lt.newList(datastructure='ARRAY_LIST')
     lt.addLast(event_cols, "instrumentalness")
     lt.addLast(event_cols, "liveness")
@@ -137,11 +140,10 @@ def createCategTree():
 
 
 def contentCreatedAt(catalog, event): 
+    """Arbol fecha completa"""
     mapDates = catalog["content_created_at"] 
     eventDate = event["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
-
-    # evenTime = eventDate.time()
     
     entry = om.get(mapDates, eventDate)
     if entry is None: 
@@ -153,7 +155,9 @@ def contentCreatedAt(catalog, event):
     lt.addLast(datentry, event)
     return catalog
 
+
 def content_time(catalog, event): 
+    """Arbol solo tiempos"""
     mapDates = catalog["content_time"] 
     eventDate = event["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
@@ -170,7 +174,9 @@ def content_time(catalog, event):
     om.put(mapDates, eventTime, datentry)
     return catalog
 
+
 def user_time(catalog, event): 
+    """Arbol solo tiempos"""
     mapDates = catalog["user_times"] 
     eventDate = event["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
@@ -188,6 +194,7 @@ def user_time(catalog, event):
 
 
 def addUserInfo(catalog, userInfo): 
+    """Arbol fecha completa"""
     mapDates = catalog["user_created_at"] 
     eventDate = userInfo["created_at"]
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
@@ -199,7 +206,7 @@ def addUserInfo(catalog, userInfo):
         datentry = me.getValue(entry)
     
     lt.addLast(datentry, userInfo)
-    user_time(catalog,userInfo)
+    user_time(catalog, userInfo)
     return catalog
 
 
@@ -228,7 +235,9 @@ def genreDictionary(catalog):
 # ==============================
 
 
-"""Requerimeinto 1"""
+# ==============================
+# REQUERIMIENTO 1
+# ==============================
 def categoryCaracterization(catalog, categoria, min_range, max_range): 
     category_info = mp.get(catalog['content_cateogries'], categoria)
     category_tree = me.getValue(category_info)
@@ -247,9 +256,10 @@ def categoryCaracterization(catalog, categoria, min_range, max_range):
     artist = mp.size(unique_artists)
     return total, artist
 
-"""Requerimeinto 2"""
 
-
+# ==============================
+# REQUERIMIENTO 2
+# ==============================
 def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablity): 
     energy_tree = me.getValue(mp.get(catalog['content_cateogries'], 'energy'))
 
@@ -267,8 +277,10 @@ def partyMusic(catalog, min_energy, max_energy, min_danceability, max_danceablit
     tracks = mp.size(unique_tracks)
     
     return final_items, tracks
-                
-"""Requerimeinto 3"""
+              
+# ==============================
+# REQUERIMIENTO 3
+# ==============================
 def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo, max_tempo):
     instrumentalness_tree = me.getValue(mp.get(catalog['content_cateogries'], 'instrumentalness'))
     instrumentalness_values = om.values(instrumentalness_tree, min_instrumentalness, max_instrumentalness)
@@ -286,24 +298,25 @@ def relaxingMusic(catalog, min_instrumentalness, max_instrumentalness, min_tempo
     
     return final_items, tracks
 
+
+
 def checkWithUser(catalog, event):
+    """
+    Función que revisa eventos con archivo de usertrackinghashtags
+    """
     event_date = event['created_at']
     event_date = datetime.datetime.strptime(event_date, '%Y-%m-%d %H:%M:%S')
     user_events_on_date = om.get(catalog['user_created_at'], event_date)
-
-    # event_date.date() lo quitamos
 
     for user_event in lt.iterator(me.getValue(user_events_on_date)):
         if (user_event['user_id'] == event['user_id']) and (user_event['track_id'] == event['track_id']):
             return True
     return False
 
-"""Requerimiento 4"""
 
-def newGenre(catalog, name, min_tempo, max_tempo):
-    mp.put(catalog['genre_dictionary'], name, {'min': min_tempo, 'max': max_tempo})
-    return catalog
-
+# ==============================
+# REQUERIMIENTO 4
+# ==============================
 def genresStudy(catalog, genres):
     answers_map = mp.newMap(numelements=10, maptype='PROBING', loadfactor=0.5,  comparefunction=cmpCategories)
     tempo_tree = me.getValue(mp.get(catalog['content_cateogries'], 'tempo'))
@@ -325,85 +338,40 @@ def genresStudy(catalog, genres):
     return answers_map
 
 
-def getReps(answer):
-    totalReps = 0
-    for genre in lt.iterator(mp.keySet(answer)):
-        totalReps += listSize(me.getValue(mp.get(answer, genre))['list'])
-    
-    return totalReps
-        
-
-def mapSize(mps):
-    return mp.size(mps)
+def newGenre(catalog, name, min_tempo, max_tempo):
+    """
+    Crea un nuevo genero y lo agrega al diccionario de generos
+    """
+    mp.put(catalog['genre_dictionary'], name, {'min': min_tempo, 'max': max_tempo})
+    return catalog
 
 
-"""Requerimiento 5"""
-
+# ==============================
+# REQUERIMIENTO 5
+# ==============================
 def genreMostListened(catalog, min_time, max_time): 
     map_dates = catalog["content_time"]
-    # map_dates["cmpfunction"] = cmpTimes 
     events_TimeDate = om.values(map_dates, min_time, max_time)
     genre_reps = mp.newMap(numelements=15, maptype='PROBING', comparefunction=cmpCategories)
-    # {'reps': 134, 'tracks': lista}
-    # recorrer la lista
-    total = 0
-    total2 = 0
-    for sublist in lt.iterator(events_TimeDate):
-        total += lt.size(sublist)
 
+    for sublist in lt.iterator(events_TimeDate):
         for event in lt.iterator(sublist): 
             if checkWithUserV2(catalog, event):
                 tempo = event['tempo']
                 track = event['track_id']
-                matchTempo(catalog, tempo, genre_reps, track)
-    
+                matchTempo(catalog, tempo, genre_reps, track)   
     sort_list = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpGenre)
     total = 0
     for genre in lt.iterator(mp.keySet(genre_reps)):
-        reps = me.getValue(mp.get(genre_reps,genre))["reps"]
-        lt.addLast(sort_list,{"genre":genre, "reps":reps})
+        reps = me.getValue(mp.get(genre_reps, genre))["reps"]
+        lt.addLast(sort_list, {"genre": genre, "reps": reps})
         total += reps
     reps_sort = sort_list.copy()
     reps_sort = mer.sort(reps_sort, cmpGenre)
     top_genre = lt.firstElement(reps_sort)["genre"]
     tracks_sort = info_top_genre(catalog, top_genre, genre_reps) 
-    return total, top_genre, reps_sort, tracks_sort   
-   
+    return total, top_genre, reps_sort, tracks_sort  
 
-def info_top_genre(catalog, top_genre, genre_reps): 
-    top_genre_tracks = me.getValue(mp.get(genre_reps,top_genre))["tracks"]
-    list_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
-    list_final_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
-    map_final_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
-    for track in lt.iterator(top_genre_tracks):
-        hashtags = me.getValue(mp.get(catalog['tracks_hashtag'], track))
-        num_hashtags = lt.size(hashtags)
-        mp.put(map_final_tracks, track, "")
-
-        average = 0 
-        for hashtag in lt.iterator(hashtags): 
-            vader = mp.get(catalog["sentimentvalues"], hashtag.lower())
-            if (vader is not None): 
-                vader = me.getValue(vader)
-                if (vader != ''):
-                    average += float(vader)
-            else: 
-                num_hashtags -= 1
-    
-        if num_hashtags>1: 
-            average = average/num_hashtags
-        track_info = {'track': track, 'num_hashtags': num_hashtags, 'average': average}
-        lt.addLast(list_tracks, track_info)
-
-    for n in range(0,10): 
-        random_pos = random.randint(1,lt.size(list_tracks))
-        random_track = lt.getElement(list_tracks, random_pos)
-        lt.addLast(list_final_tracks, random_track)
-        
-    reps_sort = list_final_tracks.copy()
-    reps_sort = mer.sort(reps_sort, cmpNumHashtags)
-
-    return reps_sort, mp.size(map_final_tracks)
 
 def checkWithUserV2(catalog, event):
     event_date = event['created_at']
@@ -423,10 +391,10 @@ def updateTrackHashtags(catalog, event):
         hashtags = lt.newList()
         mp.put(catalog['tracks_hashtag'], event['track_id'], hashtags) 
     else:
-        hashtags = me.getValue(entry)
-    
+        hashtags = me.getValue(entry)    
     lt.addLast(hashtags, event['hashtag'].lower())
     return catalog
+
 
 def matchTempo(catalog, tempo, genre_reps, track):
     genre_map = catalog['genre_dictionary']
@@ -450,6 +418,83 @@ def matchTempo(catalog, tempo, genre_reps, track):
     return catalog
         
 
+def info_top_genre(catalog, top_genre, genre_reps): 
+    top_genre_tracks = me.getValue(mp.get(genre_reps, top_genre))["tracks"]
+    list_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
+    list_final_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
+    map_final_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
+    for track in lt.iterator(top_genre_tracks):
+        hashtags = me.getValue(mp.get(catalog['tracks_hashtag'], track))
+        num_hashtags = lt.size(hashtags)
+        mp.put(map_final_tracks, track, "")
+
+        average = 0 
+        for hashtag in lt.iterator(hashtags): 
+            vader = mp.get(catalog["sentimentvalues"], hashtag.lower())
+            if (vader is not None): 
+                vader = me.getValue(vader)
+                if (vader != ''):
+                    average += float(vader)
+            else: 
+                num_hashtags -= 1
+    
+        if num_hashtags>1: 
+            average = average/num_hashtags
+        track_info = {'track': track, 'num_hashtags': num_hashtags, 'average': average}
+        lt.addLast(list_tracks, track_info)
+
+    for n in range(0,10):
+        """Selecciona 10 videos aleatorios de la lista final, estos se imprimem""" 
+        random_pos = random.randint(1,lt.size(list_tracks))
+        random_track = lt.getElement(list_tracks, random_pos)
+        lt.addLast(list_final_tracks, random_track)
+        
+    reps_sort = list_final_tracks.copy()
+    reps_sort = mer.sort(reps_sort, cmpNumHashtags)
+
+    return reps_sort, mp.size(map_final_tracks)
+
+
+# FUNCIONES DE CONSULTA
+def getReps(answer):
+    totalReps = 0
+    for genre in lt.iterator(mp.keySet(answer)):
+        totalReps += listSize(me.getValue(mp.get(answer, genre))['list'])
+    
+    return totalReps
+        
+def countArtist(catalog):
+    # TODO: cargar como hashmap y sacar el size
+    return mp.size(catalog['unique_artists'])
+
+def countTracks(catalog):
+    # TODO: cargar como hashmap y sacar el size
+    return mp.size(catalog['unique_tracks'])
+
+
+def getCateory(catalog, category): 
+    category_info = mp.get(catalog['content_cateogries'], category)
+    category_tree = None
+    if category_info is not None:
+        category_tree = me.getValue(category_info)
+    return category_tree
+
+
+def getGenre(catalog, genre):
+    valid_g = mp.get(catalog['genre_dictionary'], genre)
+    valid = None
+    if valid_g is not None:
+        valid = valid_g
+    
+    return valid
+
+
+def listSize(lst):
+    return lt.size(lst)
+
+
+def mapSize(mps):
+    return mp.size(mps)
 
 # ==============================
 # Funciones de Comparacion
@@ -533,31 +578,3 @@ def cmpTimes(time1, time2):
 # Funciones de ordenamiento
  
 
-def countArtist(catalog):
-    # TODO: cargar como hashmap y sacar el size
-    return mp.size(catalog['unique_artists'])
-
-def countTracks(catalog):
-    # TODO: cargar como hashmap y sacar el size
-    return mp.size(catalog['unique_tracks'])
-
-def getCateory(catalog, category): 
-    category_info = mp.get(catalog['content_cateogries'], category)
-    category_tree = None
-    if category_info is not None:
-        category_tree = me.getValue(category_info)
-    return category_tree
-    # return om.size(category_tree), om.height(category_tree)
-
-
-def listSize(lst):
-    return lt.size(lst)
-
-
-def getGenre(catalog, genre):
-    valid_g = mp.get(catalog['genre_dictionary'], genre)
-    valid = None
-    if valid_g is not None:
-        valid = valid_g
-    
-    return valid
