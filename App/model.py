@@ -393,6 +393,7 @@ def updateTrackHashtags(catalog, event):
     else:
         hashtags = me.getValue(entry)    
     lt.addLast(hashtags, event['hashtag'].lower())
+    mp.put(catalog['tracks_hashtag'], event['track_id'], hashtags)
     return catalog
 
 
