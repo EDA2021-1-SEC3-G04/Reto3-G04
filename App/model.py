@@ -370,41 +370,6 @@ def genreMostListened(catalog, min_time, max_time):
     return total, top_genre, reps_sort, tracks_sort   
    
 
-def info_top_genre(catalog, top_genre, genre_reps): 
-    top_genre_tracks = me.getValue(mp.get(genre_reps,top_genre))["tracks"]
-    list_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
-    list_final_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
-    map_final_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
-    for track in lt.iterator(top_genre_tracks):
-        hashtags = me.getValue(mp.get(catalog['tracks_hashtag'], track))
-        num_hashtags = lt.size(hashtags)
-        mp.put(map_final_tracks, track, "")
-
-        average = 0 
-        for hashtag in lt.iterator(hashtags): 
-            vader = mp.get(catalog["sentimentvalues"], hashtag.lower())
-            if (vader is not None): 
-                vader = me.getValue(vader)
-                if (vader != ''):
-                    average += float(vader)
-            else: 
-                num_hashtags -= 1
-    
-        if num_hashtags>1: 
-            average = average/num_hashtags
-        track_info = {'track': track, 'num_hashtags': num_hashtags, 'average': average}
-        lt.addLast(list_tracks, track_info)
-
-    for n in range(0,10): 
-        random_pos = random.randint(1,lt.size(list_tracks))
-        random_track = lt.getElement(list_tracks, random_pos)
-        lt.addLast(list_final_tracks, random_track)
-        
-    reps_sort = list_final_tracks.copy()
-    reps_sort = mer.sort(reps_sort, cmpNumHashtags)
-
-    return reps_sort, mp.size(map_final_tracks)
-
 def checkWithUserV2(catalog, event):
     event_date = event['created_at']
     event_date = datetime.datetime.strptime(event_date, '%Y-%m-%d %H:%M:%S')
@@ -439,15 +404,57 @@ def matchTempo(catalog, tempo, genre_reps, track):
 
             if g_reps is None:
                 reps = 0
-                tracks = lt.newList(datastructure='ARRAY_LIST')
+                # tracks = lt.newList(datastructure='ARRAY_LIST')
+                tracks = mp.newMap()
             else:
                 reps = me.getValue(g_reps)['reps']
                 tracks = me.getValue(g_reps)['tracks']
                 
             reps += 1
-            lt.addLast(tracks, track)
+            # lt.addLast(tracks, track)
+            mp.put(tracks, track, 1)
             mp.put(genre_reps, genre, {'reps': reps, 'tracks': tracks})
     return catalog
+        
+
+def info_top_genre(catalog, top_genre, genre_reps): 
+    top_genre_tracks = me.getValue(mp.get(genre_reps, top_genre))["tracks"]
+    top_genre_tracks = mp.keySet(top_genre_tracks)
+    list_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
+    list_final_tracks = lt.newList(datastructure="ARRAY_LIST", cmpfunction=cmpNumHashtags)
+    # map_final_tracks = mp.newMap(numelements=5000, maptype='CHAINING', comparefunction=cmpCategories)
+    for track in lt.iterator(top_genre_tracks):
+        hashtags = me.getValue(mp.get(catalog['tracks_hashtag'], track))
+        num_hashtags = lt.size(hashtags)
+        # mp.put(map_final_tracks, track, "")
+
+        total_vader = 0 
+        for hashtag in lt.iterator(hashtags): 
+            vader = mp.get(catalog["sentimentvalues"], hashtag.lower())
+            if (vader is not None): 
+                vader = me.getValue(vader)
+                if (vader != ''):
+                    total_vader += float(vader)
+            else: 
+                num_hashtags -= 1
+    
+        if num_hashtags > 0:
+            average = total_vader/num_hashtags
+        else:
+            average = 0
+        track_info = {'track': track, 'num_hashtags': num_hashtags, 'average': average}
+        lt.addLast(list_tracks, track_info)
+
+    for n in range(0, 10):
+        """Selecciona 10 videos aleatorios de la lista final, estos se imprimem""" 
+        random_pos = random.randint(1,lt.size(list_tracks))
+        random_track = lt.getElement(list_tracks, random_pos)
+        lt.addLast(list_final_tracks, random_track)
+        
+    reps_sort = list_final_tracks.copy()
+    reps_sort = mer.sort(reps_sort, cmpNumHashtags)
+
+    return reps_sort, lt.size(top_genre_tracks)
         
 
 
