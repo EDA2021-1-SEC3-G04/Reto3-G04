@@ -99,13 +99,13 @@ def addCategory(catalog, event):
             mp.put(category_map, item, cate_tree)
 
         if om.size(cate_tree) == 0:
-            tree_list = lt.newList()
+            tree_list = lt.newList(datastructure="ARRAY_LIST")
             lt.addLast(tree_list, event)
             om.put(cate_tree, valor_item, tree_list)
         else:
             tree_val = om.get(cate_tree, valor_item)
             if tree_val is None:
-                tree_list = lt.newList()
+                tree_list = lt.newList(datastructure="ARRAY_LIST")
                 om.put(cate_tree, valor_item, tree_list)
             else:
                 tree_list = me.getValue(tree_val)
@@ -147,7 +147,7 @@ def contentCreatedAt(catalog, event):
     
     entry = om.get(mapDates, eventDate)
     if entry is None: 
-        datentry = lt.newList()
+        datentry = lt.newList(datastructure="ARRAY_LIST")
         om.put(mapDates, eventDate, datentry) 
     else:
         datentry = me.getValue(entry)
@@ -164,7 +164,7 @@ def content_time(catalog, event):
     eventTime = eventDate.time()
     entry = om.get(mapDates, eventTime)
     if entry is None: 
-        datentry = lt.newList()
+        datentry = lt.newList(datastructure="ARRAY_LIST")
         om.put(mapDates, eventTime, datentry) 
         
     entry = om.get(mapDates, eventTime)  
@@ -183,7 +183,7 @@ def user_time(catalog, event):
     eventTime = eventDate.time()
     entry = om.get(mapDates, eventTime)
     if entry is None: 
-        datentry = lt.newList()
+        datentry = lt.newList(datastructure="ARRAY_LIST")
         om.put(mapDates, eventTime, datentry) 
     else:
         datentry = me.getValue(entry)
@@ -200,7 +200,7 @@ def addUserInfo(catalog, userInfo):
     eventDate = datetime.datetime.strptime(eventDate, '%Y-%m-%d %H:%M:%S')
     entry = om.get(mapDates, eventDate)
     if entry is None:
-        datentry = lt.newList()
+        datentry = lt.newList(datastructure="ARRAY_LIST")
         om.put(mapDates, eventDate, datentry) 
     else:
         datentry = me.getValue(entry)
@@ -388,7 +388,7 @@ def checkWithUserV2(catalog, event):
 def updateTrackHashtags(catalog, event):
     entry = mp.get(catalog['tracks_hashtag'], event['track_id'])
     if entry is None:
-        hashtags = lt.newList()
+        hashtags = lt.newList(datastructure="ARRAY_LIST")
         mp.put(catalog['tracks_hashtag'], event['track_id'], hashtags) 
     else:
         hashtags = me.getValue(entry)    
